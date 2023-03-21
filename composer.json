@@ -1,0 +1,30 @@
+{
+    "name": "xhe/xhe",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Xhe\\": [
+				"src/Xhe/",
+				"src/Xhe/Classes"
+			],
+			"App\\Command\\": "src/Commands/",
+			"App\\Model\\": "src/Models/",
+			"App\\Controller\\": "src/Controllers/",
+			"App\\Method\\": "src/Methods/",
+			"App\\Classes\\": "src/Classes/"
+        },
+		"files": [
+			"src/functions.php"
+		]
+    },
+    "require": {
+        "php-di/php-di": "^6.2",
+		"mnapoli/silly": "^1.7",
+        "thingengineer/mysqli-database-class": "dev-master",
+        "symfony/filesystem": "^5.3",
+		"s00d/onlinesim-api": "*",
+        "google/apiclient": "2.12.1",
+        "monolog/monolog": "^2.6",
+		"madeitbelgium/spintax": "*"
+	}
+}

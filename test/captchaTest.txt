@@ -1,0 +1,2 @@
+if ($btn->get_by_id("playCaptchaButton", false)->is_exist()) // $image->get_by_id("captchaimg", false)->is_exist();
+	$input->get_by_id("ca", false)->send_input($captcha);

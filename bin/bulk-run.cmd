@@ -1,0 +1,1 @@
+start cmd /k timeout 1 & cls & cd C:\xampp\htdocs\xhe\test & php insertCalendarEventTest.php test:test 127.0.0.1 7012 & start cmd /k timeout 2 & cls & cd C:\xampp\htdocs\xhe\test & php insertCalendarEventTest.php test:test 127.0.0.1 7013
