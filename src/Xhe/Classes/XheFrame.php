@@ -1,24 +1,27 @@
 <?php
-
 namespace Xhe;
-
-class XheFrame  extends XheFrameCompatible {
-			function __construct($server,$password="")
+class XheFrame  extends XheFrameCompatible
+{
+	/////////////////////////////////////// SERVICE /////////////////////////////////////////////////////
+	// server initialization
+	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 		$this->prefix = "Frame";
 	}
-   	
-        
-   		function get_body_by_number($number,$as_html,$frame=-1)
+   	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   	// получить тело фрейма по его номеру
+	function get_body_by_number($number,$as_html,$frame=-1)
 	{
 		$this->wait_element_exist_by_number($number,$frame);		
 
 		$params = array( "number" => $number , "as_html" => $as_html , "frame" => $frame );
 		return $this->call_get(__FUNCTION__,$params);
 	}
-   		function set_body_by_number($number,$html_body,$frame=-1)
+   	// задать тело фрейма по его номеру
+	function set_body_by_number($number,$html_body,$frame=-1)
 	{
 		$this->wait_element_exist_by_number($number,$frame);		
 
@@ -26,5 +29,6 @@ class XheFrame  extends XheFrameCompatible {
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
 
-   	};		
+   	/////////////////////////////////////////////////////////////////////////////////////////////////////
+};		
 ?>

@@ -1,66 +1,83 @@
 <?php
 namespace Xhe;
+use Xhe\XheBrowser;
 
 class XheMouse extends XheBaseObject
 {
-		   	var $x;
+	//////////////////////////////// SERVICVE VARIABLES /////////////////////////////////////////////////
+	// temporary
+   	var $x;
    	var $y;
-			function __construct($server,$password="")
+	//////////////////////////////// СЕРВИСНЫЕ ФУНКЦИИ /////////////////////////////////////////////////
+	// server initialization
+	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 		$this->prefix = "Mouse";
 	}
-   	
-   	
-		function click($x="-1",$y="-1",$scroll=true)
+   	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// сэмулировать щелчок левой кнопки мыши в заданной точке
+	function click($x="-1",$y="-1",$scroll=true)
 	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function click_to_screen($x="-1",$y="-1")
+	// щелкнуть мышью в координатах экрана
+	function click_to_screen($x="-1",$y="-1")
 	{
 		$params = array( "x" => $x , "y" => $y  );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-   	   	function double_click($x="-1",$y="-1",$scroll=true)
+   	// сэмулировать двойной щелчок левой кнопки мыши
+   	function double_click($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-   	   	function left_button_down($x="-1",$y="-1",$scroll=true)
+   	// сэмулировать нажатие на левую кнопку мыши
+   	function left_button_down($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-   	   	function left_button_up($x="-1",$y="-1",$scroll=true)
+   	// сэмулировать отпускание левой кнопки мыши
+   	function left_button_up($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-   	   	function right_button_click($x="-1",$y="-1",$scroll=true)
+   	// сэмулировать нажатие на правую кнопку мыши
+   	function right_button_click($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-   	   	function right_button_click_to_screen($x="-1",$y="-1")
+   	// сэмулировать нажатие на правую кнопку мыши в координатах десктопа
+   	function right_button_click_to_screen($x="-1",$y="-1")
    	{
 		$params = array( "x" => $x , "y" => $y );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-   	   	function right_button_down($x="-1",$y="-1",$scroll=true)
+   	// сэмулировать отпускание правой кнопки мыши
+   	function right_button_down($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-   	   	function right_button_up($x="-1",$y="-1",$scroll=true)
+   	// сэмулировать щелчок правой кнопки мыши в заданной точке
+   	function right_button_up($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-		function move($x,$y,$scroll=true,$time=0,$tremble=2,$buttons="")
+	// передвинуть мышь в заданные координаты браузера
+	function move($x,$y,$scroll=true,$time=0,$tremble=2,$buttons="")
 	{
 		if ($time==0)
 		{
@@ -69,7 +86,7 @@ class XheMouse extends XheBaseObject
 		}
 		else
 		{
-			$browser = new XheBrowser($this->server);
+			$browser = new Xhe\XheBrowser($this->server);
 			$xc=$this->get_x(true);
 			$yc=$this->get_y(true);
 			if ($scroll)
@@ -96,7 +113,8 @@ class XheMouse extends XheBaseObject
 			return $this->call_boolean(__FUNCTION__,$params);
 		}
 	}
-		function move_on_screen($x,$y,$time=0,$tremble=2,$buttons="")
+	// переместить мышь по экрану
+	function move_on_screen($x,$y,$time=0,$tremble=2,$buttons="")
 	{
 		if ($time==0)
 		{
@@ -124,56 +142,67 @@ class XheMouse extends XheBaseObject
 			return $this->call_boolean(__FUNCTION__,$params);
 		}
 	}
-   	   	function wheel($time,$x,$y)
+   	// управление колесиком мыши 
+   	function wheel($time,$x,$y)
    	{
 		$params = array( "x" => $x , "y" => $y , "time" => $time  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-		function move_to($x, $y, $type_, $time_ )
+	// вирутальное перемещение мыши 
+	function move_to($x, $y, $type_, $time_ )
 	{
 		$params = array( "x" => $x , "y" => $y , "type" => $type_ , "time" => $time_ );
 		return $this->call_boolean(__FUNCTION__, $params);
 	}
 
-   	
-		function send_click($x="-1",$y="-1",$scroll=true)
+   	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// отправить щелчок левой кнопки мыши в заданной точке
+	function send_click($x="-1",$y="-1",$scroll=true,$addCtrl=false)
 	{
-		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll );
+		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll , "addCtrl" => $addCtrl );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function send_double_click($x="-1",$y="-1",$scroll=true)
+	// отправить двойной щелчок левой кнопкой мыши в заданной точке
+	function send_double_click($x="-1",$y="-1",$scroll=true)
 	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-   	   	function send_left_button_down($x="-1",$y="-1",$scroll=true)
+   	// отправить нажатие на левую кнопку мыши
+   	function send_left_button_down($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-   	   	function send_left_button_up($x="-1",$y="-1",$scroll=true)
+   	// отправить отпускание левой кнопки мыши
+   	function send_left_button_up($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-   	   	function send_right_button_click($x="-1",$y="-1",$scroll=true)
+   	// отправить щелчок правой кнопки мыши в заданной точке
+   	function send_right_button_click($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-   	   	function send_right_button_down($x="-1",$y="-1",$scroll=true)
+   	// отправить нажатие на правую кнопку мыши
+   	function send_right_button_down($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-   	   	function send_right_button_up($x="-1",$y="-1",$scroll=true)
+   	// отправить отпускание правой кнопки мыши
+   	function send_right_button_up($x="-1",$y="-1",$scroll=true)
    	{
 		$params = array( "x" => $x , "y" => $y , "scroll" => $scroll  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-		function send_move($x,$y,$scroll=true,$time=0,$tremble=5,$buttons="")
+	// отправить перемещение мыши в заданную точку
+	function send_move($x,$y,$scroll=true,$time=0,$tremble=5,$buttons="")
 	{
 		if ($time==0)
 		{
@@ -182,7 +211,7 @@ class XheMouse extends XheBaseObject
 		}
 		else
 		{
-			$browser = new XheBrowser($this->server);
+			$browser = new Xhe\XheBrowser($this->server);
 			$xc=$this->get_x(true,true);
 			$yc=$this->get_y(true,true);
 			if ($scroll)
@@ -209,29 +238,35 @@ class XheMouse extends XheBaseObject
 			return $this->call_boolean(__FUNCTION__,$params);
 		}
 	}
-   	   	function send_wheel($n,$x=1200,$y=600,$key=0)
+   	// отправить прокрутку колеса мыши
+   	function send_wheel($n,$x=1200,$y=600,$key=0)
    	{
 		$params = array( "x" => $x , "y" => $y , "n" => $n , "key" => $key );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-		function send_move_to($x, $y, $type_, $time_ )
+	// вирутальное перемещение мыши 
+	function send_move_to($x, $y, $type_, $time_ )
 	{
 		$params = array( "x" => $x , "y" => $y , "type" => $type_ , "time" => $time_ );
 		return $this->call_boolean(__FUNCTION__, $params);
 	}
-   	   	function send_touch($id,$touch_type,$x,$y,$radiusX=0,$radiusY=0,$rotationAngle=0,$pressure=0,$modiefiers=0,$pointerType=0)
+   	// отправить касание пальцев
+   	function send_touch($id,$touch_type,$x,$y,$radiusX=0,$radiusY=0,$rotationAngle=0,$pressure=0,$modiefiers=0,$pointerType=0)
    	{
 		$params = array( "x" => $x , "y" => $y ,"id" => $id , "touch_type" => $touch_type , "radiusX" => $radiusX, "radiusY" => $radiusY, "rotationAngle" => $rotationAngle, "pressure" => $pressure, "modiefiers" => $modiefiers, "pointerType" => $pointerType);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-   	   	function send_touch_to($x0,$y0,$x,$y,$type_,$time_)
+   	// отправить касание пальцев по траектории
+   	function send_touch_to($x0,$y0,$x,$y,$type_,$time_)
    	{
 		$params = array( "x0" => $x0 , "y0" => $y0 , "x" => $x , "y" => $y , "type_" => $type_, "time_" => $time_);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-   	
-   	   	function get_position ($in_browser=false,$virtual=false)
+   	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   	// получить Х и Y положение курсора мыши
+   	function get_position ($in_browser=false,$virtual=false)
    	{
 		$params = array( "in_browser" => $in_browser , "virtual" => $virtual );
 		$res=$this->call_get(__FUNCTION__,$params);
@@ -242,40 +277,48 @@ class XheMouse extends XheBaseObject
 		return $res;
    	}
 
-   	   	function get_x($in_browser=false,$virtual=false)
+   	// получить Х положение курсора мыши
+   	function get_x($in_browser=false,$virtual=false)
    	{
 		$params = array( "in_browser" => $in_browser , "virtual" => $virtual );
 		return $this->call_get(__FUNCTION__,$params);
    	}
-   	    	function get_y($in_browser=false,$virtual=false)
+   	// получить Y положение курсора мыши
+    	function get_y($in_browser=false,$virtual=false)
    	{
 		$params = array( "in_browser" => $in_browser , "virtual" => $virtual );
 		return $this->call_get(__FUNCTION__,$params);
    	}
 
-        
-        	function send_click_to_flash_player($x,$y,$flash_num,$bUseFlashXY=false,$scroll=true)
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // отправить событие клика левой кнопки мыши во flash проигрыватель
+	function send_click_to_flash_player($x,$y,$flash_num,$bUseFlashXY=false,$scroll=true)
 	{
 		$params = array( "x" => $x , "y" => $y , "flash_num" => $flash_num , "bUseFlashXY" => $bUseFlashXY, "scroll" => $scroll );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-        	function send_right_click_to_flash_player($x,$y,$flash_num,$bUseFlashXY=false,$scroll=true)
+        // отправить событие клика правой кнопки мыши во flash проигрыватель
+	function send_right_click_to_flash_player($x,$y,$flash_num,$bUseFlashXY=false,$scroll=true)
 	{
 		$params = array( "x" => $x , "y" => $y , "flash_num" => $flash_num , "bUseFlashXY" => $bUseFlashXY, "scroll" => $scroll );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
 
-        	function send_mouse_move_to_flash_player($x,$y,$flash_num,$bUseFlashXY=false,$scroll=true)
+        // отправить событие движения курсора мыши во flash проигрыватель
+	function send_mouse_move_to_flash_player($x,$y,$flash_num,$bUseFlashXY=false,$scroll=true)
 	{
 		$params = array( "x" => $x , "y" => $y , "flash_num" => $flash_num , "bUseFlashXY" => $bUseFlashXY, "scroll" => $scroll );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
 
-        	function get_mouse_pos_to_flash_player($flash_num,$x="",$y="")
+        // получить Х и Y координаты во flash проигрывателе по координатам в браузере или по текущему положению курсора в браузере
+	function get_mouse_pos_to_flash_player($flash_num,$x="",$y="")
 	{
 		$params = array( "x" => $x , "y" => $y , "flash_num" => $flash_num );
 		return $this->call_get(__FUNCTION__,$params);
 	}
 
-        };
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+};
 ?>

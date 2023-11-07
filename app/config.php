@@ -63,7 +63,19 @@ return [
 	'clipboard' => (function (ContainerInterface $c) {
 		return $c->make('Xhe\XheClipboard', ['server' => $c->get('client')]);
 	}),
-
+	
+	App\Command\GmailInputSearchMail::class => (function (ContainerInterface $c) {
+		return new \App\Command\GmailInputSearchMail($c);
+	}),
+	
+	App\Command\GmailClickSearchLastMail::class => (function (ContainerInterface $c) {
+		return new \App\Command\GmailClickSearchLastMail($c);
+	}),
+	
+	App\Command\GmailClickNotSpamMail::class => (function (ContainerInterface $c) {
+		return new \App\Command\GmailClickNotSpamMail($c);
+	}),
+	
 	App\Command\TelegramProxyInit::class => (function (ContainerInterface $c) {
 		return new \App\Command\TelegramProxyInit($c);
 	}),
@@ -100,6 +112,10 @@ return [
 		return new \App\Command\GetCalendarId($c);
 	}),
 	
+	App\Command\GetFileId::class => (function(ContainerInterface $c) {
+		return new \App\Command\GetFileId($c);
+	}),
+	
 	App\Command\IsWebpageAvailable::class => (function(ContainerInterface $c) {
 		return new \App\Command\IsWebpageAvailable($c);
 	}),
@@ -118,6 +134,10 @@ return [
 	
 	'spintax' => (function(ContainerInterface $c) {
 		return new \App\Classes\Spintax();
+	}),
+	
+	App\Command\CreateDocument::class => (function(ContainerInterface $c) {
+		return new \App\Command\CreateDocument($c);
 	}),
 
 	App\Command\GetAccessToken::class => (function(ContainerInterface $c) {
@@ -168,12 +188,20 @@ return [
 		return new \App\Command\SetCanvas($c);
 	}),
 
+	App\Command\SetHeader::class => (function(ContainerInterface $c) {
+		return new \App\Command\SetHeader($c);
+	}),
+	
 	App\Command\SetPlatform::class => (function(ContainerInterface $c) {
 		return new \App\Command\SetPlatform($c);
 	}),
 
 	App\Method\GooglePlaygroundLogin::class => (function(ContainerInterface $c) {
 		return new \App\Method\GooglePlaygroundLogin($c);
+	}),
+	
+	App\Method\GooglePlaygroundDriveLogin::class => (function(ContainerInterface $c) {
+		return new \App\Method\GooglePlaygroundDriveLogin($c);
 	}),
 	
 	App\Method\GoogleLogin::class => (function(ContainerInterface $c) {
@@ -296,6 +324,10 @@ return [
         return $c->make('Xhe\XheMouse', ['server' => $c->get('client')]);
     },
 	
+	'frame' => function (ContainerInterface $c) {
+        return $c->make('Xhe\XheFrame', ['server' => $c->get('client')]);
+    },
+	
 	'raw' => function (ContainerInterface $c) {
         return $c->make('Xhe\XheRaw', ['server' => $c->get('client')]);
     },
@@ -318,6 +350,10 @@ return [
 	
 	'pre' => function (ContainerInterface $c) {
 		return $c->make('Xhe\XhePre', ['server' => $c->get('client')]);
+	},
+	
+	'tr' => function (ContainerInterface $c) {
+		return $c->make('Xhe\XheTr', ['server' => $c->get('client')]);
 	},
 	
 	'application' => function (ContainerInterface $c) {

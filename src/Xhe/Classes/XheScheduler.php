@@ -1,17 +1,20 @@
 <?php
 namespace Xhe;
-
 class XheScheduler extends XheBaseObject
 {
-		function __construct($server,$password="")
+	////////////////////////////////////// СЕРВИСНЫЕ ФУНКЦИИ //////////////////////////////////////////
+	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 		$this->prefix = "Scheduler";
 	}
-	
-	
-   		function add($path,$type=0,$date="",$time="",$count=-1,$active=true,$comments="",$add_params="")
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   	// добавить задачу
+	function add($path,$type=0,$date="",$time="",$count=-1,$active=true,$comments="",$add_params="")
 	{		
 		$datetime = "$date $time";
 		$arr = date_parse($datetime);
@@ -21,13 +24,15 @@ class XheScheduler extends XheBaseObject
 		$params = array( "path" => $path , "type" => $type , "year" => $arr["year"] , "month" => $arr["month"] ,"day" => $arr["day"] , "hour" => $arr["hour"], "minute" => $arr["minute"], "second" => $arr["second"] , "count" => $count , "active" => $active, "comments" => $comments, "add_params" => $add_params);
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-   		function delete($num_task)
+   	// удалить задачу
+	function delete($num_task)
 	{
 		$params = array( "num_task" => $num_task );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
 
-   		function edit($num_task,$path,$type=0,$date="",$time="",$count=-1,$active=true,$comments="",$add_params="")
+   	// редактировать задачу
+	function edit($num_task,$path,$type=0,$date="",$time="",$count=-1,$active=true,$comments="",$add_params="")
 	{
 		$datetime = "$date $time";
 		$arr = date_parse($datetime);
@@ -37,13 +42,15 @@ class XheScheduler extends XheBaseObject
 		$params = array( "num_task" => $num_task , "path" => $path , "type" => $type , "year" => $arr["year"] , "month" => $arr["month"] ,"day" => $arr["day"] , "hour" => $arr["hour"], "minute" => $arr["minute"], "second" => $arr["second"] , "count" => $count , "active" => $active, "comments" => $comments, "add_params" => $add_params);
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-   		function activate($num_task,$activate=true)
+   	// активировать задачу
+	function activate($num_task,$activate=true)
 	{
 		$params = array( "num_task" => $num_task , "activate" => $activate );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
 
-   		function get($num_task,&$path_,&$type,&$date,&$time,&$count,&$active,&$comments,&$add_params)
+   	// получить задачу
+	function get($num_task,&$path_,&$type,&$date,&$time,&$count,&$active,&$comments,&$add_params)
 	{
 		$params = array( "num_task" => $num_task );
 		$res=$this->call_get(__FUNCTION__,$params);
@@ -69,27 +76,33 @@ class XheScheduler extends XheBaseObject
 		}
 	}
 
-	
-   		function get_count()
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   	// получить число задач
+	function get_count()
 	{
 		$params = array( );
 		return $this->call_get(__FUNCTION__,$params);
 	}
 
-   		function delete_all()
+   	// удалить все задачи
+	function delete_all()
 	{
 		$params = array( );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
 
-   		function activate_all($activate=true)
+   	// активировать все задчи
+	function activate_all($activate=true)
 	{
 		$params = array( "activate" => $activate );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
 
-	
-   		function kill_current_script($kill=true)
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   	// принудительно завершать текущий скрипт
+	function kill_current_script($kill=true)
 	{
 		$params = array( "kill" => $kill  );
 		return $this->call_boolean(__FUNCTION__,$params);

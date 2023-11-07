@@ -1,13 +1,15 @@
 <?php
-
 namespace Xhe;
-
-class XheInputImage  extends XheInputImageCompatible {
-			function __construct($server,$password="")
+class XheInputimage  extends XheInputImageCompatible
+{
+	/////////////////////////////////////// SERVICE /////////////////////////////////////////////////////
+	// server initialization
+	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 		$this->prefix = "InputImage";
 	}
-	};	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+};	
 ?>

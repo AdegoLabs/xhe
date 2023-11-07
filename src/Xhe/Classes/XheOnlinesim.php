@@ -1,6 +1,5 @@
 <?php
 namespace Xhe;
-
 class XheOnlineSimRu extends XheBaseObject
 {
 	var $dev_key= "513747";
@@ -8,104 +7,123 @@ class XheOnlineSimRu extends XheBaseObject
 	var $apikey="";
 	var $timeout=60;
 
-	
-                function __construct()
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // constructor
+        function __construct()
         {
 		$this->server = "onlinesim.ru/api";
         }
 
-        	
-	        function login($user,$password,$email)
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// аторизация (получение ключа разработчика)
+        function login($user,$password,$email)
 	{
 		$params = array( "user" => $user , "password" => $password , "email" => $email , "dev_key" => $this->dev_key , "dev_id" => $this->dev_key );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-	        function getServiceList()
+	// получение списка доступных сервисов
+        function getServiceList()
 	{
 		$params = array( "apikey" => $this->apikey );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function getNum($service,$form="",$forward_number="",$forward_minutes="",$clean_call="",$simoperator="",$extension="",$region="")
+	// запрос виртуального номера, создает операцию
+	function getNum($service,$form="",$forward_number="",$forward_minutes="",$clean_call="",$simoperator="",$extension="",$region="")
 	{
 		$params = array( "apikey" => $this->apikey , "service" => $service , "form" => $form,"forward_number" => $forward_number,"forward_minutes" => $forward_minutes, "clean_call" => $clean_call, "simoperator" => $simoperator, "extension" => $extension,"region" => $region , "dev_key" => $this->dev_key , "dev_id" => $this->dev_key);
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function setForwardStatusEnable($tzid)
+	// подтверждает переадресацию
+	function setForwardStatusEnable($tzid)
 	{
 		$params = array( "apikey" => $this->apikey , "tzid" => $tzid );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function getState($tzid,$message_to_code="",$form="",$orderby="")
+	// возвращает состояние выбранной операции
+	function getState($tzid,$message_to_code="",$form="",$orderby="")
 	{
 		$params = array( "apikey" => $this->apikey , "tzid" => $tzid , "message_to_code" => $message_to_code , "form" => $form , "orderby" => $orderby);
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function getOperations()
+	// возвращает список и состояние всех операции.
+	function getOperations()
 	{
 		$params = array( "apikey" => $this->apikey );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function setOperationRevise($tzid)
+	// cоздает запрос на уточнение ответа по операции.
+	function setOperationRevise($tzid)
 	{
 		$params = array( "apikey" => $this->apikey , "tzid" => $tzid );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function setOperationOk($tzid)
+	// отправляет уведомление об успешном получении кода и завершает операцию
+	function setOperationOk($tzid)
 	{
 		$params = array( "apikey" => $this->apikey , "tzid" => $tzid );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function getBalance()
+	// возвращает информацию о состоянии баланса.
+	function getBalance()
 	{
 		$params = array( "apikey" => $this->apikey );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function getService()
+	// получение списка сервисов для повторного заказа СМС
+	function getService()
 	{
 		$params = array( "apikey" => $this->apikey );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function getServiceNumber($service)
+	// получает список номеров для указанного сервиса.
+	function getServiceNumber($service)
 	{
 		$params = array( "apikey" => $this->apikey , "service" => $service);
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function getNumRepeat($service,$number)
+	// cоздает запрос на повторное использование виртуального номера
+	function getNumRepeat($service,$number)
 	{
 		$params = array( "apikey" => $this->apikey , "service" => $service , "number" => $number);
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function forwardingList($id="",$page="",$sort="")
+	// выводит список всех переадресаций
+	function forwardingList($id="",$page="",$sort="")
 	{
 		$params = array( "apikey" => $this->apikey , "id" => $id , "page" => $page , "sort" => $sort );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function forwardingSave($id,$minutes="",$auto="",$forward_number="",$max_minutes="")
+	// изменяет параметры переадресации
+	function forwardingSave($id,$minutes="",$auto="",$forward_number="",$max_minutes="")
 	{
 		$params = array( "apikey" => $this->apikey , "id" => $id , "minutes" => $minutes , "auto" => $auto , "forward_number" => $forward_number, "max_minutes" => $max_minutes );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-		function forwardingRemove($id)
+	// удаляет (выключает) переадресацию
+	function forwardingRemove($id)
 	{
 		$params = array( "apikey" => $this->apikey , "id" => $id  );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);
 		return json_decode($res,JSON_UNESCAPED_UNICODE);
 	}
-	        function getForwardPaymentsList($id)
+	// выводит список всех автоматических платежей
+        function getForwardPaymentsList($id)
 	{
 		$params = array( "apikey" => $this->apikey , "id" => $id  );
 	    	$res=$this->call_get(__FUNCTION__.".php",$params,$this->timeout);

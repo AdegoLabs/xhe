@@ -23,7 +23,7 @@
         "thingengineer/mysqli-database-class": "dev-master",
         "symfony/filesystem": "^5.3",
 		"s00d/onlinesim-api": "*",
-        "google/apiclient": "2.12.1",
+        
         "monolog/monolog": "^2.6",
 		"madeitbelgium/spintax": "*"
 	}

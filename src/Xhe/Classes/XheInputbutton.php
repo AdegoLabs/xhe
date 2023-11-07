@@ -1,13 +1,15 @@
 <?php
-
 namespace Xhe;
-
-class XheInputButton  extends XheInputButtonCompatible {
-			function __construct($server,$password="")
+class XheInputbutton  extends XheInputbuttonCompatible
+{
+	/////////////////////////////////////// SERVICE /////////////////////////////////////////////////////
+	// server initialization
+	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 		$this->prefix = "InputButton";
 	}	
-	};	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+};	
 ?>

@@ -1,17 +1,20 @@
 <?php
 namespace Xhe;
-
-class XheFTPCompatible extends XheBaseObject
+class XheFtpCompatible extends XheBaseObject
 {
-			function create_directoy($server,$dir_name)
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// create dirrectory on server
+	function create_directoy($server,$dir_name)
 	{
 		return $this->call("FTP.CreateDirectory?server=".base64_encode($server)."&dir_name=".base64_encode($dir_name));
 	}
-		function disconect($server)
+	// отсоединится от фтп сервера
+	function disconect($server)
 	{	   	
 	    	return $this->disconnect($server);
 	}        
-		function disconect_all()
+	// отсоединится от всех подключеннных фтп серверов
+	function disconect_all()
 	{
 	   	return $this->disconnect_all();
 	}

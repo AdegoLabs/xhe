@@ -1,7 +1,6 @@
 <?php
 namespace Xhe;
 
-
 define ("VK_UP", "38");
 define ("VK_DOWN", "40");
 define ("VK_LEFT", "37");
@@ -17,20 +16,25 @@ define ("VK_ENTER", "13");
 define ("VK_SPACE", "32");
 define ("VK_ESC", "27");
 
-class XheKeyboard extends XheKeyboardCompatible
+class XheKeyboard extends XheBaseObject
 {
 
-			function __construct($server,$password="")
+	//////////////////////////////////////// СЕРВИСНЫЕ ФУНКЦИИ /////////////////////////////////////////
+	// server initialization
+	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 		$this->prefix = "Keyboard";
 	}
-	
-	
-	   	function input($string,$timeout="20:40",$inFlash=false,$auto_change=true)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// эммулирует ввод всех символов из переданной функции строки
+   	function input($string,$timeout="20:40",$inFlash=false,$auto_change=true)
    	{
-		$PHP_Use_Trought_Shell = false; //careful;
+		$PHP_Use_Trought_Shell = false;
 
 		$params = array( "string" => $string , "timeout" => $timeout , "inFlash" => $inFlash, "auto_change" => $auto_change, "auto_change" => $auto_change);
 		$res=$this->call_boolean(__FUNCTION__,$params);
@@ -41,113 +45,143 @@ class XheKeyboard extends XheKeyboardCompatible
 		sleep(1);
 		return $res;
    	}
-	   	function key($code,$is_key=true,$ctrl=false,$alt=false,$shift=false)
+	// эммулирует ввод одной кнопки по ее скан коду
+   	function key($code,$is_key=true,$ctrl=false,$alt=false,$shift=false)
    	{
 		$params = array( "code" => $code , "is_key" => $is_key, "ctrl" => $ctrl, "alt" => $alt, "shift" => $shift );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function key_down($key,$is_key=true)
+	// эмулирует нажатие клавиши
+   	function key_down($key,$is_key=true)
    	{
 		$params = array( "key" => $key , "is_key" => $is_key );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-	   	function key_up($key,$is_key=true)
+	// эмулирует отжатие клавиши
+   	function key_up($key,$is_key=true)
    	{
 		$params = array( "key" => $key , "is_key" => $is_key );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-	
-	   	function send_input($string,$timeout="0:2",$inFlash=false,$auto_change=true)
+	// нажать клавишу по коду (альтернативный вариант для Citrix)
+	function press_key_by_code($code,$ctrl=false,$alt=false,$shift=false)
+	{			  
+		$params = array( "code" => $code , "ctrl" => $ctrl, "alt" => $alt, "shift" => $shift );
+		return $this->call_boolean(__FUNCTION__,$params);
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// посылает ввод строки в браузер, даже если он скрыт
+   	function send_input($string,$timeout="0:2",$inFlash=false,$auto_change=true)
    	{
-		$PHP_Use_Trought_Shell = false; //careful;
+		$PHP_Use_Trought_Shell = false;
 
 		$params = array( "string" => $string , "timeout" => $timeout , "inFlash" => $inFlash , "auto_change" => $auto_change );
 		$res=$this->call_boolean(__FUNCTION__,$params);
 		
-		//if ($PHP_Use_Trought_Shell)
-		//	fgets(STDIN);
+		if ($PHP_Use_Trought_Shell)
+			fgets(STDIN);
 
 		sleep(1);
 		return $res;
    	}
-	   	function send_key($key,$is_key=false,$ctrl=false,$alt=false,$shift=false)
+	// посылает ввод клавиши в браузер, даже если он скрыт
+   	function send_key($key,$is_key=false,$ctrl=false,$alt=false,$shift=false)
    	{
 		$params = array( "key" => $key , "is_key" => $is_key, "ctrl" => $ctrl, "alt" => $alt, "shift" => $shift);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-	   	function send_key_down($key,$is_key=false)
+	// посылает нажатие клавиши в браузер, даже если он скрыт
+   	function send_key_down($key,$is_key=false)
    	{
 		$params = array( "key" => $key , "is_key" => $is_key);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-	   	function send_key_up($key,$is_key=false)
+	// посылает отжатие клавиши в браузер, даже если он скрыт 
+   	function send_key_up($key,$is_key=false)
    	{
 		$params = array( "key" => $key , "is_key" => $is_key);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-	
-	   	function set_ctrl_prefix($on)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// эммулирует нажатие или отжатие CTRL
+   	function set_ctrl_prefix($on)
    	{
 		$params = array( "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-		function set_alt_prefix($on)
+	// эммулирует нажатие или отжатие ALT
+	function set_alt_prefix($on)
    	{
 		$params = array( "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}	
-	   	function set_shift_prefix($on)
+	// эммулирует нажатие или отжатие SHIFT 
+   	function set_shift_prefix($on)
    	{
 		$params = array( "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-	   	
-		function press_caps_lock() 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+   	
+	// эммулирует нажатие кнопки CAPS LOCK
+	function press_caps_lock() 
    	{
 		$params = array( );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}  
-   		function press_num_lock()
+   	// эммулирует нажатие кнопки NUM LOCK
+	function press_num_lock()
    	{
 		$params = array( );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-   		function press_scroll_lock()
+   	// эммулирует нажатие кнопки SCROLL LOCK
+	function press_scroll_lock()
    	{ 
 		$params = array( );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-		function is_caps_lock_pressed() 
+	// проверяет нажатие кнопки CAPS LOCK
+	function is_caps_lock_pressed() 
    	{
 		$params = array( );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}  
-   		function is_num_lock_pressed()
+   	// проверяет нажатие кнопки NUM LOCK
+	function is_num_lock_pressed()
    	{
 		$params = array( );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-   		function is_scroll_lock_pressed()
+   	// проверяет нажатие кнопки SCROLL LOCK
+	function is_scroll_lock_pressed()
    	{ 
 		$params = array( );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-	
-	   	function get_current_language()
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// получить текущий язык ввода
+   	function get_current_language()
    	{
 		$params = array( );
 		return $this->call_get(__FUNCTION__,$params);
    	}
-	   	function set_current_language($language)
+	// задать текущий язык ввода
+   	function set_current_language($language)
    	{
 		$params = array( "language" => $language );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-	};
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+};
 ?>

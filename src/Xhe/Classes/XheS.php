@@ -1,14 +1,15 @@
 <?php
-
 namespace Xhe;
-
-class XheS  extends XheBaseDOMVisual
+class XheS  extends XheBaseVisualDom
 {
-			function __construct($server,$password="")
+	/////////////////////////////////////// SERVICE /////////////////////////////////////////////////////
+	// server initialization
+	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 		$this->prefix = "S";
 	}
-	};		
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+};		
 ?>

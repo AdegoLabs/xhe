@@ -23,6 +23,33 @@ abstract class LoginMethod extends Method {
 			$cookieController->getValue()
 		);
 		
+		if (!$controller->hasProfile()) {
+			$profile = \App\Model\ProfileBuilder::buildWithData();
+			
+			$model = $controller->get();
+			$model->profile = $profile;
+			
+			$controller->set($model);
+			$controller->update(['profileId' => $profile->id]);
+			
+			unset($model);
+		} 
+		
+		$profileController = new \App\Controller\ProfileController($controller->get()->profile);
+		
+		
+		$this->container->get('App\Command\BrowserSettings')->initProfile([
+			'useragent' => $profileController->getUseragent(), 
+			'language' => $profileController->getLanguage(),
+			'timezone' => $profileController->getTimezone(),
+			'canvas' => $profileController->getCanvas(),
+			/*'resolution' => $profileController->getResolution(),*/
+			'hardware' => $profileController->getHardware(),
+			'audio' => $profileController->getAudio(),
+			'bound' => $profileController->getBound()
+		]);
+		
+		
 		if (!$controller->hasProxy()) {
 			$proxy = \App\Model\ProxyBuilder::findUnused();
 			if (!is_null($proxy)) {
@@ -49,30 +76,6 @@ abstract class LoginMethod extends Method {
 				$proxyController->getPassword(),
 			);
 		}
-		
-		if (!$controller->hasProfile()) {
-			$profile = \App\Model\ProfileBuilder::buildWithData();
-			
-			$model = $controller->get();
-			$model->profile = $profile;
-			
-			$controller->set($model);
-			$controller->update(['profileId' => $profile->id]);
-			
-			unset($model);
-		} 
-		
-		$profileController = new \App\Controller\ProfileController($controller->get()->profile);
-		$this->container->get('App\Command\BrowserSettings')->initProfile([
-			'useragent' => $profileController->getUseragent(), 
-			'language' => $profileController->getLanguage(),
-			'timezone' => $profileController->getTimezone(),
-			'canvas' => $profileController->getCanvas(),
-			'resolution' => $profileController->getResolution(),
-			'hardware' => $profileController->getHardware(),
-			'audio' => $profileController->getAudio(),
-			'bound' => $profileController->getBound()
-		]);
 		
 		if (!$authorized = $this->method($controller->getData())) {
 			//$controller->deactivate();

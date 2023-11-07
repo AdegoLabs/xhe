@@ -15,6 +15,7 @@ else $q = 150;
 
 try {
 	$data = App\Model\GoogleAccount::where('status', 1)::where('working', 0)::orderBy('used', 'asc')::get($q);
+
 //	foreach($data as $account) {
 	for ($i = count($data) - 1; $i >= 0; $i--) {
 		$account = $data[$i];

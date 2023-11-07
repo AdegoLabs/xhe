@@ -1,37 +1,45 @@
 <?php
 namespace Xhe;
-
-class XheFineReaderOCR extends XheBaseObject
+class XheFineReader extends XheBaseObject
 {
-			function __construct($server,$password="")
+	////////////////////////////////////// СЕРВИСНЫЕ ФУНКЦИИ ///////////////////////////////////////////
+	// server initialization
+	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 		$this->prefix = "FineReaderOCR";
 	}
-	
-	   	function set_language($language="Russin English") 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// задать язык
+   	function set_language($language="Russian English") 
    	{
 		$params = array( "language" => $language);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}    	
-	   	function set_program_folder($path) 
+	// задать путь к Fine Reader
+   	function set_program_folder($path) 
    	{
 		$params = array( "path" => $path);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}    	
 
-	
-	   	function recognize($path) 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// распознать картинку
+   	function recognize($path) 
    	{
 		$params = array( "path" => $path);
 		return $this->call_get(__FUNCTION__,$params);
    	}    	
-	   	function convert($inpath,$outpath) 
+	// конвертировать файл
+   	function convert($inpath,$outpath) 
    	{
 		$params = array( "inpath" => $inpath , "outpath" => $outpath);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}    	
 
-	};
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+};
 ?>

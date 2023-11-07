@@ -1,169 +1,210 @@
 <?php
 namespace Xhe;
-
 class XheFolder extends XheFolderCompatible
 {
-			function __construct($server,$password="")
+	/////////////////////////////////// СЕРВИСНЫЕ ФУНКЦИИ //////////////////////////////////////////////
+	// server initialization
+	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 		$this->prefix = "Folder";
 	}
-	
-	
-		function create($path)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// создать каталог
+	function create($path)
 	{			  
 		$params = array( "path" => $path );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function copy($path,$new_folder_place,$flag_fail_exist="true",$timeout=-1)
+	// копирование папки
+	function copy($path,$new_folder_place,$flag_fail_exist="true",$timeout=3000)
 	{			  
 		$params = array( "path" => $path , "new_folder_place" => $new_folder_place , "flag_fail_exist" => $flag_fail_exist );
 		return $this->call_boolean(__FUNCTION__,$params,$timeout);
 	}
-		function move($path,$new_folder_place,$timeout=-1)
+	// перенос папки
+	function move($path,$new_folder_place,$timeout=3000)
 	{			  
 		$params = array( "path" => $path , "new_folder_place" => $new_folder_place );
 		return $this->call_boolean(__FUNCTION__,$params,$timeout);
 	}
-		function rename($path,$new_folder_name,$timeout=-1)
+	// переименование папки
+	function rename($path,$new_folder_name,$timeout=3000)
 	{			  
 		$params = array( "path" => $path , "new_folder_name" => $new_folder_name );
 		return $this->call_boolean(__FUNCTION__,$params,$timeout);
 	}
-		function delete($path)
+	// удаление
+	function delete($path)
 	{			  
 		$params = array( "path" => $path );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function clear($path)
+	// очистка содержимого
+	function clear($path,$timeout=3000)
 	{			  
 		$params = array( "path" => $path );
-		return $this->call_boolean(__FUNCTION__,$params);
+		return $this->call_boolean(__FUNCTION__,$params,$timeout);
 	}
-		function rar($path,$path_to_rar="",$options="u -m5 -mdE -s -r -ed -ep1")
+	// зарарить папку (на системе должен быть Rar)
+	function rar($path,$path_to_rar="",$options="u -m5 -mdE -s -r -ed -ep1",$timeout=3000)
 	{			  
 		$params = array( "path" => $path , "path_to_rar" => $path_to_rar , "options" => $options );
-		return $this->call_boolean(__FUNCTION__,$params);
+		return $this->call_boolean(__FUNCTION__,$params,$timeout);
+	}
+	// зазиповать папку
+	function zip($path,$to_file,$timeout=3000)
+	{			  
+		$params = array( "path" => $path , "to_file" => $to_file );
+		return $this->call_boolean(__FUNCTION__,$params,$timeout);
 	}
 
-	
-		function is_exist($path)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// проверить существование папки
+	function is_exist($path)
 	{
 		$params = array( "path" => $path );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-        	function get_name($path)
+        // получить имя папки
+	function get_name($path)
 	{			  
 		$params = array( "path" => $path );
 		return $this->call_get(__FUNCTION__,$params);
 	}
-        	function get_disk($path)
+        // получить букву диска папки
+	function get_disk($path)
 	{			  
 		$params = array( "path" => $path );
 		return $this->call_get(__FUNCTION__,$params);
 	}
-		function get_size($path)
+	// получить размер папки
+	function get_size($path)
 	{			  
 		$params = array( "path" => $path );
 		return $this->call_get(__FUNCTION__,$params);
 	}
-		function get_items_count($path,$include_subfolders=false,$only_folders=false,$timeout=-1)
+	// получить количество элементов в папке
+	function get_items_count($path,$include_subfolders=false,$only_folders=false,$timeout=3000)
 	{			  
 		$params = array( "path" => $path , "include_subfolders" => $include_subfolders , "only_folders" => $only_folders);
 		return $this->call_get(__FUNCTION__,$params,$timeout);
 	}
-		function get_all_items($path,$include_subfolders=false,$only_folders=false,$timeout=-1)
+	// получить все элементы из папки 
+	function get_all_items($path,$include_subfolders=false,$only_folders=false,$timeout=3000)
 	{			  
 		$params = array( "path" => $path , "include_subfolders" => $include_subfolders , "only_folders" => $only_folders);
 		return $this->call_get(__FUNCTION__,$params,$timeout);
 	}
-		function get_random_file($path,$extension="txt",$include_subfolders=false,$timeout=-1)
+	// получить случайный путь файла в папке
+	function get_random_file($path,$extension="txt",$include_subfolders=false,$timeout=3000)
 	{			  
 		$params = array( "path" => $path  , "extension" => $extension , "include_subfolders" => $include_subfolders);
 		return $this->call_get(__FUNCTION__,$params,$timeout);
 	}
 
-	
-		function get_creation_date($path,$time=false)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// получить дату создания
+	function get_creation_date($path,$time=false)
 	{			  
 		$params = array( "path" => $path , "time" => $time );
 		return $this->call_get(__FUNCTION__,$params);
 	}
-		function get_modification_date($path,$time=false)
+	// получить дату последнего изменения
+	function get_modification_date($path,$time=false)
 	{			  
 		$params = array( "path" => $path , "time" => $time );
 		return $this->call_get(__FUNCTION__,$params);
 	}
-		function get_lastacess_date($path,$time=false)
+	// получить дату последнего доступа
+	function get_lastacess_date($path,$time=false)
 	{			  
 		$params = array( "path" => $path , "time" => $time );
 		return $this->call_get(__FUNCTION__,$params);
 	}
 
-	
-		function is_normal($path)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// проверить есть ли атрибут NORMAL
+	function is_normal($path)
 	{			  
 		$attr="NORMAL";
 		$params = array( "path" => $path , "attr" => $attr );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-	        function is_readonly($path)
+	// проверить есть ли атрибут READONLY
+        function is_readonly($path)
 	{			  
 		$attr="READONLY";
 		$params = array( "path" => $path , "attr" => $attr );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function is_hidden($path)
+	// проверить есть ли атрибут HIDDEN
+	function is_hidden($path)
 	{			  
 		$attr="HIDDEN";
 		$params = array( "path" => $path , "attr" => $attr );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function is_system($path)
+	// проверить есть ли атрибут SYSTEM
+	function is_system($path)
 	{			  
 		$attr="SYSTEM";
 		$params = array( "path" => $path , "attr" => $attr );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function is_archive($path)
+	// проверить есть ли атрибут ARCHIVE 
+	function is_archive($path)
 	{			  
 		$attr="ARCHIVE";
 		$params = array( "path" => $path , "attr" => $attr );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
 
-	
-		function set_normal($path,$on=true)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// задать атрибут NORMAL
+	function set_normal($path,$on=true)
 	{			  
 		$attr="NORMAL";
 		$params = array( "path" => $path , "attr" => $attr , "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-	        function set_readonly($path,$on=true)
+	// задать атрибут READONLY
+        function set_readonly($path,$on=true)
 	{			  
 		$attr="READONLY";
 		$params = array( "path" => $path , "attr" => $attr , "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function set_hidden($path,$on=true)
+	// задать атрибут HIDDEN
+	function set_hidden($path,$on=true)
 	{			  
 		$attr="HIDDEN";
 		$params = array( "path" => $path , "attr" => $attr , "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function set_system($path,$on=true)
+	// задать атрибут SYSTEM
+	function set_system($path,$on=true)
 	{			  
 		$attr="SYSTEM";
 		$params = array( "path" => $path , "attr" => $attr , "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}
-		function set_archive($path,$on=true)
+	// задать атрибут ARCHIVE 
+	function set_archive($path,$on=true)
 	{			  
 		$attr="ARCHIVE";
 		$params = array( "path" => $path , "attr" => $attr , "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
 	}	          
 
-	};	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+};	
 ?>

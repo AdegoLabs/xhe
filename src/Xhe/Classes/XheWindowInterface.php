@@ -1,13 +1,13 @@
 <?php
-
 namespace Xhe;
-
-//use XheWindowInterfaces, XheWindowInterfacesCompatible;
-
 class XheWindowInterface extends XheWindowInterfacesCompatible
 {
-			var $inner_number;
-			function __construct($inner_number,$server,$password="")
+	/////////////////////////////////////// SERVICE VARIABLES ///////////////////////////////////////////
+	// inner number
+	var $inner_number;
+	/////////////////////////////////////// SERVICE FUNCTIONS ///////////////////////////////////////////
+	// server initialization
+	function __construct($inner_number,$server,$password="")
 	{    
 		$this->inner_number = $inner_number;
 		$this->server = $server;
@@ -19,212 +19,266 @@ class XheWindowInterface extends XheWindowInterfacesCompatible
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);	       
 	}	
-	  	function get_clone() 
+	// клонировать интерфейс к окну
+  	function get_clone() 
 	{
 		$params = array( "inner_number" => $this->inner_number );
 		$clone_inner_number = $this->call_get(__FUNCTION__,$params);	       
 		return new XheWindowInterface($clone_inner_number,$this->server,$this->password);
 	}	
-	
-	   	function set_text($text)
+	// получить окно как UI элемент
+  	function get_ui_element() 
+	{
+		$params = array( "inner_number" => $this->inner_number );
+		$ui_inner_number = $this->call_get(__FUNCTION__,$params);	       
+		return new XheUI($ui_inner_number,$this->server,$this->password);
+	}	
+	// получить окно как UI элемент (синоним)
+  	function get_ui() 
+	{
+		return $this->get_ui_element();
+	}	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// задать текст окна
+   	function set_text($text)
    	{
 		$params = array( "inner_number" => $this->inner_number , "text" => $text );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function show($on=true)
+	// задать видимость окна
+   	function show($on=true)
    	{
 		$params = array( "inner_number" => $this->inner_number , "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function enable($on)
+	// изменить доступность окна
+   	function enable($on)
    	{
 		$params = array( "inner_number" => $this->inner_number , "on" => $on );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	   	function focus()
+	// задать фокус на окно
+   	function focus()
    	{
 		$params = array( "inner_number" => $this->inner_number);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function foreground()
+	// перемстить окно в самый верх 
+   	function foreground()
    	{
 		$params = array( "inner_number" => $this->inner_number);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function minimize()
+	// минимизирвоать окно
+   	function minimize()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function maximize()
+	// максимизировать окно
+   	function maximize()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function restore()
+	// восстановить окно
+   	function restore()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function close()
+	// закрыть окно
+   	function close()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	   	function move($x=-1,$y=-1)
+	// передвинуть окно
+   	function move($x=-1,$y=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "x" => $x , "y" => $y );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function resize($width=-1,$height=-1)
+	// изменить размер окна
+   	function resize($width=-1,$height=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "width" => $width , "height" => $height );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function message($type,$wparam,$lparam)
+	// послать сообщение в окно
+   	function message($type,$wparam,$lparam)
    	{
 		$params = array( "inner_number" => $this->inner_number , "type" => $type , "wparam" => $wparam , "lparam" => $lparam );
 		return $this->call_get(__FUNCTION__,$params);
    	}   
 
-	   	function cut()
+	// выполнить операцию вырезать в окне
+   	function cut()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function copy()
+	// выполнить операцию копирования в окне
+   	function copy()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function paste($text="")
+	// выполнить операцию вставить в окне
+   	function paste($text="")
    	{
 		$params = array( "inner_number" => $this->inner_number , "text" => $text);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function clear()
+	// выполнить операцию очистить в окне
+   	function clear()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function undo()
+	// выполнить операцию отменить в окне
+   	function undo()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	   	function screenshot($filepath,$x=-1,$y=-1,$width=-1,$heigth=-1,$as_gray=false)
+	// скриншот окна
+   	function screenshot($filepath,$x=-1,$y=-1,$width=-1,$heigth=-1,$as_gray=false,$with_non_client=false)
    	{
-		$params = array( "inner_number" => $this->inner_number , "x" => $x , "y" => $y , "width" => $width , "height" => $heigth , "filepath" => $filepath, "as_gray" => $as_gray);
+		$params = array( "inner_number" => $this->inner_number , "x" => $x , "y" => $y , "width" => $width , "height" => $heigth , "filepath" => $filepath, "as_gray" => $as_gray, "with_non_client" => $with_non_client);
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+	// вызвать пункт меню окна по его пути например - "0:0:5")
+   	function click_menu_item($path)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "path" => $path );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	   	function get_child_count($include_subchildren=false)
+	// получить число дочерних окон
+   	function get_child_count($include_subchildren=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "include_subchildren" => $include_subchildren );
 		return $this->call_get(__FUNCTION__,$params);
    	}   
-	   	function get_child_by_number($number, $include_subchildren=false)
+	// получить дочернее окно по номеру
+   	function get_child_by_number($number, $include_subchildren=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "number" => $number , "include_subchildren" => $include_subchildren);
 		$new_internal_number=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterface($new_internal_number,$this->server,$this->password);
    	}   
-	   	function get_child_by_text($text,$exactly=false,$include_subchildren=false)
+	// получить дочернее окно по тексту
+   	function get_child_by_text($text,$exactly=false,$include_subchildren=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "text" => $text , "exactly" => $exactly , "include_subchildren" => $include_subchildren);
 		$new_internal_number=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterface($new_internal_number,$this->server,$this->password);
    	}   
-	   	function get_child_by_class($class_name,$exactly=false,$include_subchildren=false)
+	// получить дочернее окно по имени классу
+   	function get_child_by_class($class_name,$exactly=false,$include_subchildren=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "class_name" => $class_name , "exactly" => $exactly , "include_subchildren" => $include_subchildren );
 		$new_internal_number=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterface($new_internal_number,$this->server,$this->password);
    	}   
-	   	function get_all_child_by_text($text,$exactly=false,$include_subchildren=false)
+	// получить дочерние окно по тексту
+   	function get_all_child_by_text($text,$exactly=false,$include_subchildren=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "text" => $text , "exactly" => $exactly , "include_subchildren" => $include_subchildren);
 		$numbers=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterfaces($numbers,$this->server,$this->password);
    	}   
-	   	function get_all_child_by_class($class_name,$exactly=false,$include_subchildren=false)
+	// получить дочерние окно по имени классу
+   	function get_all_child_by_class($class_name,$exactly=false,$include_subchildren=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "class_name" => $class_name , "exactly" => $exactly , "include_subchildren" => $include_subchildren );
 		$numbers=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterfaces($numbers,$this->server,$this->password);
    	}   
-	   	function get_next($number=0)
+	// получить слудующее окно 
+   	function get_next($number=0)
    	{
 		$params = array( "inner_number" => $this->inner_number , "number" => $number);
 		$new_internal_number=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterface($new_internal_number,$this->server,$this->password);
    	}   
-	   	function get_prev($number=0)
+	// получить предыдущее окно 
+   	function get_prev($number=0)
    	{
 		$params = array( "inner_number" => $this->inner_number , "number" => $number);
 		$new_internal_number=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterface($new_internal_number,$this->server,$this->password);
    	}   
-	   	function get_parent($level=0)
+	// получить родительское окно 
+   	function get_parent($level=0)
    	{
 		$params = array( "inner_number" => $this->inner_number , "level" => $level );
 		$new_internal_number=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterface($new_internal_number,$this->server,$this->password);
    	}   
-	   	function get_owner($level=0)
+	// получить владельца окна
+   	function get_owner($level=0)
    	{
 		$params = array( "inner_number" => $this->inner_number , "level" => $level );
 		$new_internal_number=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterface($new_internal_number,$this->server,$this->password);
    	}   
-	   	function get_all_child($include_subchildren=false)
+	// получить список всех дочерних окон
+   	function get_all_child($include_subchildren=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "include_subchildren" => $include_subchildren );
 		$numbers=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterfaces($numbers,$this->server,$this->password);
    	}   
-	   	function get_all_next()
+	// получить список всех следующих окон
+   	function get_all_next()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		$numbers=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterfaces($numbers,$this->server,$this->password);
    	}   
-	   	function get_all_prev()
+	// получить список всех предыдущих окон
+   	function get_all_prev()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		$numbers=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterfaces($numbers,$this->server,$this->password);
    	}   
-	   	function get_all_parent()
+	// получить список всех родительских окон
+   	function get_all_parent()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		$numbers=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterfaces($numbers,$this->server,$this->password);
    	}   
-	   	function get_top_parent()
+	// получить окно - наивысшего родителя
+   	function get_top_parent()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		$new_internal_number=$this->call_get(__FUNCTION__,$params);
 	
 		return new XheWindowInterface($new_internal_number,$this->server,$this->password);
    	}   
-	   	function get_top_owner()
+	// получить окно - наивысшего владельца
+   	function get_top_owner()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		$new_internal_number=$this->call_get(__FUNCTION__,$params);
@@ -232,223 +286,268 @@ class XheWindowInterface extends XheWindowInterfacesCompatible
 		return new XheWindowInterface($new_internal_number,$this->server,$this->password);
    	}   
 
-	   	function get_text()
+	// ожидать доступности окна
+   	function wait_for_input_idle($wait_time_in_seconds = 120)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "wait_time_in_seconds" => $wait_time_in_seconds);
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+
+	// ожидать открытия дочернего окна по номеру
+   	function wait_for_open_child_by_number($number, $include_subchildren=false, $wait_time_in_seconds = 120)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "number" => $number , "include_subchildren" => $include_subchildren, "wait_time_in_seconds" => $wait_time_in_seconds);
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+	// ожидать открытия дочернего окна по тексту
+   	function wait_for_open_child_by_text($text,$exactly=false,$include_subchildren=false, $wait_time_in_seconds = 120)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "text" => $text , "exactly" => $exactly , "include_subchildren" => $include_subchildren, "wait_time_in_seconds" => $wait_time_in_seconds);
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+	// ожидать открытия дочернего окна по имени классу
+   	function wait_for_open_child_by_class($class_name,$exactly=false,$include_subchildren=false, $wait_time_in_seconds = 120)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "class_name" => $class_name , "exactly" => $exactly , "include_subchildren" => $include_subchildren , "wait_time_in_seconds" => $wait_time_in_seconds);
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+
+	// получить текст окна
+   	function get_text()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_get(__FUNCTION__,$params);
    	}   
-	   	function get_number($visibled=true,$mained=true)
+	// получить номер окна
+   	function get_number($visibled=true,$mained=true)
    	{
 		$params = array( "inner_number" => $this->inner_number , "visibled" => $visibled , "mained" => $mained );
 		return $this->call_get(__FUNCTION__,$params);
    	}   
-	   	function get_style($extended=false)
+	// получить стиль окна (простой или расширенный)
+   	function get_style($extended=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "extended" => $extended );
 		return $this->call_get(__FUNCTION__,$params);
    	}   
-	   	function get_class_name()
+	// получить имя класса окна
+   	function get_class_name()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_get(__FUNCTION__,$params);
    	}   
-	   	function get_hwnd()
+	// получить дескриптор HWND окна
+   	function get_hwnd()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_get(__FUNCTION__,$params);
    	}   
-	   	function get_process_id()
+	// получить ID процесса окна
+   	function get_process_id()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_get(__FUNCTION__,$params);
    	}   
-	   	function get_thread_id()
-   	{
-		$params = array( "inner_number" => $this->inner_number );
-		return $this->call_get(__FUNCTION__,$params);
-   	}   
-
-	   	function get_x()
-   	{
-		$params = array( "inner_number" => $this->inner_number );
-		return $this->call_get(__FUNCTION__,$params);
-   	}   
-	   	function get_y()
-   	{
-		$params = array( "inner_number" => $this->inner_number );
-		return $this->call_get(__FUNCTION__,$params);
-   	}   
-	   	function get_width()
-   	{
-		$params = array( "inner_number" => $this->inner_number );
-		return $this->call_get(__FUNCTION__,$params);
-   	}   
-	   	function get_height()
+	// получить ID потока окна
+   	function get_thread_id()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_get(__FUNCTION__,$params);
    	}   
 
-	   	function is_exist()
+	// получить X координату окна
+   	function get_x($client = false)
    	{
-		return $this->inner_number!=-1;
+		$params = array( "inner_number" => $this->inner_number , "client" => $client );
+		return $this->call_get(__FUNCTION__,$params);
    	}   
-	   	function is_visible()
+	// получить Y координату окна
+   	function get_y($client = false)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "client" => $client );
+		return $this->call_get(__FUNCTION__,$params);
+   	}   
+	// получить ширину окна
+   	function get_width($client = false)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "client" => $client );
+		return $this->call_get(__FUNCTION__,$params);
+   	}   
+	// получить высоту окна
+   	function get_height($client = false)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "client" => $client );
+		return $this->call_get(__FUNCTION__,$params);
+   	}   
+
+	// существует ли окно
+   	function is_exist()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function is_enable()
+	// видимо ли окно
+   	function is_visible()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function is_focus()
+	// доступно ли окно
+   	function is_enable()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function is_foreground()
+	// есть ли фокус ввода на окне
+   	function is_focus()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function is_child()
+	// есть ли пользовательский фокус ввода на окне
+   	function is_foreground()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function is_minimize()
+	// дочернее ли окно
+   	function is_child()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function is_maximize()
+	// минимизировано ли окно
+   	function is_minimize()
+   	{
+		$params = array( "inner_number" => $this->inner_number );
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+	// максимизировано ли окно
+   	function is_maximize()
    	{
 		$params = array( "inner_number" => $this->inner_number );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	   	function send_mouse_move($dx=0,$dy=0)
+	// послать перемещение мышью в окно
+   	function send_mouse_move($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	   	function send_mouse_click($dx=0,$dy=0)
+	// послать щелчок мышью в окно
+   	function send_mouse_click($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function send_mouse_double_click($dx=0,$dy=0)
+	// послать двойной щелчок мышью в окно
+   	function send_mouse_double_click($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function send_mouse_left_down($dx=0,$dy=0)
+	// послать нажатие левой кнопки мыши в окно
+   	function send_mouse_left_down($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function send_mouse_left_up($dx=0,$dy=0)
-   	{
-		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
-		return $this->call_boolean(__FUNCTION__,$params);
-   	}   
-
-	   	function send_mouse_right_click($dx=0,$dy=0)
-   	{
-		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
-		return $this->call_boolean(__FUNCTION__,$params);
-   	}   
-	   	function send_mouse_right_down($dx=0,$dy=0)
-   	{
-		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
-		return $this->call_boolean(__FUNCTION__,$params);
-   	}   
-	   	function send_mouse_right_up($dx=0,$dy=0)
+	// послать отжатие левой кнопки мыши в окно
+   	function send_mouse_left_up($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	   	function mouse_move($dx=0,$dy=0)
+	// послать щелчок правой кнопки мыши в окно
+   	function send_mouse_right_click($dx=-1,$dy=-1)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+	// послать нажатие правой кнопки мыши в окно
+   	function send_mouse_right_down($dx=-1,$dy=-1)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+	// послать отжатие правой кнопки мыши в окно
+   	function send_mouse_right_up($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	   	function mouse_click($dx=0,$dy=0)
-   	{
-		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
-		return $this->call_boolean(__FUNCTION__,$params);
-   	}   
-	   	function mouse_double_click($dx=0,$dy=0)
-   	{
-		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
-		return $this->call_boolean(__FUNCTION__,$params);
-   	}   
-	   	function mouse_left_down($dx=0,$dy=0)
-   	{
-		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
-		return $this->call_boolean(__FUNCTION__,$params);
-   	}   
-	   	function mouse_left_up($dx=0,$dy=0)
+	// перемещение мышью в окне
+   	function mouse_move($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	   	function mouse_right_click($dx=0,$dy=0)
+	// щелчок мышью в окне
+   	function mouse_click($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function mouse_right_down($dx=0,$dy=0)
+	// двойной щелчок мышью в окне
+   	function mouse_double_click($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function mouse_right_up($dx=0,$dy=0)
+	// нажатие левой кнопки мыши в окне
+   	function mouse_left_down($dx=-1,$dy=-1)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+	// отжатие левой кнопки мыши в окне
+   	function mouse_left_up($dx=-1,$dy=-1)
    	{
 		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
 
-	/*   	function send_input($string,$timeout=INPUT_TIME,$inFlash=false)
+	// щелчок правой кнопки мыши в окне
+   	function mouse_right_click($dx=-1,$dy=-1)
    	{
-		$PHP_Use_Trought_Shell = true;
-
-		$params = array( "inner_number" => $this->inner_number , "string" => $string , "timeout" => $timeout , "inFlash" => $inFlash );
-		$res=$this->call_boolean(__FUNCTION__,$params);
-		
-		if ($PHP_Use_Trought_Shell)
-			fgets(STDIN);
-
-		sleep(1);
-		return $res;
-   	}
-	   	function send_key($key,$is_key=false)
-   	{
-		$params = array( "inner_number" => $this->inner_number , "key" => $key , "is_key" => $is_key);
+		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
 		return $this->call_boolean(__FUNCTION__,$params);
-   	}
-   	*/
+   	}   
+	// нажатие правой кнопки мыши в окне
+   	function mouse_right_down($dx=-1,$dy=-1)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
+	// отжатие правой кнопки мыши в окне
+   	function mouse_right_up($dx=-1,$dy=-1)
+   	{
+		$params = array( "inner_number" => $this->inner_number , "dx" => $dx , "dy" => $dy );
+		return $this->call_boolean(__FUNCTION__,$params);
+   	}   
 
-	   	function send_key_down($key,$is_key=false,$ctrl=false,$alt=false,$shift=false)
+	// посылает нажатие клавиши в окно
+   	function send_key_down($key,$is_key=false,$ctrl=false,$alt=false,$shift=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "key" => $key , "is_key" => $is_key, "ctrl" => $ctrl, "alt" => $alt, "shift" => $shift);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-	   	function send_key_up($key,$is_key=false,$ctrl=false,$alt=false,$shift=false)
+	// посылает отжатие клавиши в окно
+   	function send_key_up($key,$is_key=false,$ctrl=false,$alt=false,$shift=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "key" => $key , "is_key" => $is_key, "ctrl" => $ctrl, "alt" => $alt, "shift" => $shift);
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
 
-	   	function input($string,$timeout="0:2")
+	// эммулирует ввод всех символов из переданной функции строки в окно
+   	function input($string,$timeout=INPUT_TIME)
    	{
-		$PHP_Use_Trought_Shell = false;
+		global $PHP_Use_Trought_Shell;
 
 		$params = array( "inner_number" => $this->inner_number , "string" => $string , "timeout" => $timeout );
 		$res=$this->call_boolean(__FUNCTION__,$params);
@@ -459,22 +558,26 @@ class XheWindowInterface extends XheWindowInterfacesCompatible
 		sleep(1);
 		return $res;
    	}
-	   	function key($code,$is_key=false,$ctrl=false,$alt=false,$shift=false)
+	// эммулирует ввод одной кнопки по ее скан коду в окне
+   	function key($code,$is_key=false,$ctrl=false,$alt=false,$shift=false)
    	{
 		$params = array( "inner_number" => $this->inner_number , "code" => $code , "ctrl" => $ctrl, "alt" => $alt, "shift" => $shift );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}   
-	   	function key_down($key)
+	// эмулирует нажатие клавиши в окне
+   	function key_down($key)
    	{
 		$params = array( "inner_number" => $this->inner_number , "key" => $key  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-	   	function key_up($key)
+	// эмулирует отжатие клавиши  в окне
+   	function key_up($key)
    	{
 		$params = array( "inner_number" => $this->inner_number , "key" => $key  );
 		return $this->call_boolean(__FUNCTION__,$params);
    	}
-	   	function set_current_language($language)
+	// эммулирует задание языка ввода  в окне
+   	function set_current_language($language)
    	{
 		$params = array( "inner_number" => $this->inner_number , "language" => $language  );
 		return $this->call_boolean(__FUNCTION__,$params);

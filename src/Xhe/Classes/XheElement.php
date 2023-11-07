@@ -1,19 +1,20 @@
 <?php
-
 namespace Xhe;
-
-use XheInterface, XheInterfaces;
-
-class XheElement  extends XheElementCompatible {
-     function __construct($server,$password="")
+class XheElement  extends XheElementCompatible
+{
+	/////////////////////////////////////// SERVICE /////////////////////////////////////////////////////
+	// server initialization
+        function __construct($server,$password="")
         {    
                 $this->server = $server;
                 $this->password = $password;
 		$this->prefix = "Element";
 
         }
-	
-                function get_tag_by_number($number,$frame=-1)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // получить tag элемента по номеру
+        function get_tag_by_number($number,$frame=-1)
         {
 		$this->wait_element_exist_by_number($number,$frame);		
 
@@ -21,15 +22,18 @@ class XheElement  extends XheElementCompatible {
 		return $this->call_get(__FUNCTION__,$params);
         }
 
-        
-                function get_x_by_tag_by_number($tag,$number,$frame=-1)
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // получить x координату элемента с заданным тэгом по номеру
+        function get_x_by_tag_by_number($tag,$number,$frame=-1)
         {
 		$this->wait_element_exist_by_number($number,$frame);		
 
 		$params = array( "tag" => $tag , "number" => $number , "frame" => $frame );
 		return $this->call_get(__FUNCTION__,$params);
         }
-                function get_y_by_tag_by_number($tag,$number,$frame=-1)
+        // получить y координату элемента с заданным тэгом по номеру
+        function get_y_by_tag_by_number($tag,$number,$frame=-1)
         {
 		$this->wait_element_exist_by_number($number,$frame);		
 
@@ -37,15 +41,18 @@ class XheElement  extends XheElementCompatible {
 		return $this->call_get(__FUNCTION__,$params);
         }
 
-	
-                function get_all_by_tag($tag,$frame=-1)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // получить все элементы с заданным тэгом
+        function get_all_by_tag($tag,$frame=-1)
         {
 		$params = array( "tag" => $tag , "frame" => $frame );
 		$res=$this->call_get(__FUNCTION__,$params);
 		return new XheInterfaces($res,$this->server,$this->password);
         }
 
-                function convert_number($number,$object_name,$frame=-1)
+        // преобразовать номер элемента в номер заданного объекта
+        function convert_number($number,$object_name,$frame=-1)
         {
 		$elm=$this->get_by_number($number,$frame);
 		if (!$elm->is_exist())
@@ -54,29 +61,34 @@ class XheElement  extends XheElementCompatible {
 		return $elm->get_number($object_name);
         }
 
-	
-		function get_by_query_selector($selector,$frame=-1)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// получить интерфейс объекта через querySelector
+	function get_by_query_selector($selector,$frame=-1)
 	{
 		$params = array( "selector" => $selector , "frame" => $frame);
 		$internal_number=$this->call_get(__FUNCTION__,$params);
 
 		return new XheInterface($internal_number,$this->server,$this->password);
 	}	
-		function get_all_by_query_selector($selector,$frame=-1)
+	// получить интерфейсы объектов через querySelectorAll
+	function get_all_by_query_selector($selector,$frame=-1)
 	{
 		$params = array( "selector" => $selector , "frame" => $frame);
 		$res=$this->call_get(__FUNCTION__,$params);
 
 		return new XheInterfaces($res,$this->server,$this->password);		
 	}	
-		function get_by_js($js,$add_file="",$frame=-1)
+	// получить интерфейс объекта используя js
+	function get_by_js($js,$add_file="",$frame=-1)
 	{
 		$params = array( "js" => $js , "add_file" => $add_file , "frame" => $frame);
 		$internal_number=$this->call_get(__FUNCTION__,$params);
 
 		return new XheInterface($internal_number,$this->server,$this->password);
 	}	
-		function get_all_by_js($js,$add_file="",$frame=-1)
+	// получить интерфейсы объектов используя js 
+	function get_all_by_js($js,$add_file="",$frame=-1)
 	{
 		$params = array( "js" => $js , "add_file" => $add_file , "frame" => $frame);
 		$res=$this->call_get(__FUNCTION__,$params);
@@ -84,6 +96,7 @@ class XheElement  extends XheElementCompatible {
 		return new XheInterfaces($res,$this->server,$this->password);		
 	}	
 
-	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 };      
 ?>

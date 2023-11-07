@@ -1,7 +1,7 @@
 <?php
 
-$input = 'C:\Users\user741\Desktop\workflow\projects\calendar api\attendees\all.31oct22\pmcasino';
-$output = 'C:\Users\user741\Desktop\workflow\projects\calendar api\attendees\all.31oct22\combined\all-vip.csv';
+$input = 'C:\Users\user741\Desktop\workflow\projects\calendar api\attendees\crossproject\email\all-jp2107';
+$output = 'C:\Users\user741\Desktop\workflow\projects\calendar api\attendees\crossproject\email\combined2107\all-jp.csv';
 
 function joinFiles(array $files, $result, $dir) {
     if(!is_array($files)) {

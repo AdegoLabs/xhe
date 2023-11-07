@@ -6,7 +6,8 @@ use App\Classes\OnlineSim;
 use \s00d\OnlineSimApi\OnlineSimApi as OnlineSimApi;
 
 class GoogleLogin extends LoginMethod {
-	public $url = 'https://accounts.google.com/signin/v2/identifier?service=accountsettings&flowName=GlifWebSignIn&flowEntry=ServiceLogin';
+	//public $url = 'https://accounts.google.com/signin/v2/identifier?service=accountsettings&flowName=GlifWebSignIn&flowEntry=ServiceLogin';
+	public $url = 'https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F';
 	
 	public function denied() {
 		$url = $this->container->get('webpage')->get_url();
@@ -26,24 +27,71 @@ class GoogleLogin extends LoginMethod {
 		if ($this->isChooseAccountRequired($email)) {
 			$this->chooseAccount($email);
 			
-			if ($this->isLoggedIn()) {
+			if ($this->isLoggedIn($email)) {
 				$this->container->get(LoggerInterface::class)->info("Logged in successfully as " . $email . "!\n");
 				//printf("Logged in successfully as %s!\n", $email);
 				return true;
 			}
 		}
 		
-		sleep(5);
-		
-		if ($this->isCaptchaExist()) {
-			$captcha = $this->solveGoogleCaptchaV1();
-			$this->inputCaptcha($captcha);
+		if ($this->isEmailFormVisibled()) {
+			$this->inputEmail($email);
+				
+			if (!$this->isEnteredEmailIsFull()) {
+				beep();
+				$this->container->get(LoggerInterface::class)->error("Found set_value bug!");
+				printf("Found set_value bug!\n");
+				die("Script work was stopped due to service errors...");
+				//sleep(1000);
+			}
+			
 			$this->submitEmailForm();
 		}
 		
+		sleep(3);
+		
+		do {
+			if ($this->isCaptchaExist()) {
+				$captcha = $this->solveGoogleCaptchaV1();
+				$this->inputCaptcha($captcha);
+				$this->submitEmailForm();
+			}
+		} while ($this->isCaptchaWrong());
+		
+		if ($this->isReCaptchaExist()) {
+			$this->solveGoogleCaptchaRecaptcha();
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			//printf("WAITING BEFORE SUBMIT BUTTON...");
+			//sleep(10);
+			//echo $this->container->get('btn')->click_by_number(0) || $this->container->get('btn')->get_by_attribute("class","submitButton", false)->click();
+			$this->container->get('button')->get_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button")->click();
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			sleep(2);
+		}
+		
+		sleep(3);
+		
+		if ($this->container->get('frame')->get_by_src("https://www.google.com/recaptcha", false)->is_visibled()) {
+			$this->container->get('browser')->wait();
+			$this->container->get('button')->get_by_number(1)->click();
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			sleep(3);
+		}
+			
+	
 		if ($this->isPasswordFormVisibled()) {
 			$this->inputPassword($password);
 			$this->submitPasswordForm();
+		}
+		
+		if ($this->isPasswordChanged()) {
+			$this->container->get(LoggerInterface::class)->error("Password was changed for " . $email . "!");
+			printf("Password was changed for %s!\n", $email);
+			
+			return false;
 		}
 		
 		if ($this->isReserveEmailRequired()) {
@@ -64,8 +112,9 @@ class GoogleLogin extends LoginMethod {
 		
 		$this->phoneVerificationCheck();
 		$this->phoneVerificationCheck();
+			
 		
-		if ($this->isLoggedIn()) {
+		if ($this->isLoggedIn($email)) {
 			//printf("Logged in successfully as %s!\n", $email);
 			$this->container->get(LoggerInterface::class)->info("Logged in successfully as " . $email . "!\n");
 			return true;
@@ -84,7 +133,7 @@ class GoogleLogin extends LoginMethod {
 	
 	public function isPhoneRequiredUsed() {
 		$this->container->get('browser')->wait();
-		return $this->container->get('span')->get_by_id('error', false)->is_visibled();
+		return ($this->container->get('span')->get_by_id('error', false)->is_visibled() || $this->container->get('div')->get_by_inner_text("This phone number cannot be used for verification.", false)->is_visibled() || $this->container->get('div')->get_by_inner_text("This phone number has already been used too many times for verification", false)->is_visibled() || $this->container->get('div')->get_by_inner_text("не может быть использован", false)->is_visibled());
 		
 	}
 	
@@ -105,14 +154,24 @@ class GoogleLogin extends LoginMethod {
 	}
 	
 	public function inputCaptcha($captcha) {
+		$this->container->get('input')->get_by_id('ca')->set_value("");
+		$this->container->get('browser')->wait();
 		$this->container->get('input')->get_by_id('ca')->focus();
-		$this->container->get('input')->get_by_id('ca')->send_input($captcha);
+		$this->container->get('browser')->wait();
+		$this->container->get('input')->get_by_id('ca')->set_value($captcha);
 		$this->container->get('browser')->wait();
 	}
 	
+	public function isPasswordChanged() {
+		$this->container->get('browser')->wait();
+		
+		return $this->container->get('span')->get_by_inner_text("Пароль был изменен ", false)->is_visibled();
+	}
+	
 	public function solveGoogleCaptchaV1() {
-		$captchaPath = "C:\\tmp\\captcha.jpg";
-		$this->container->get('image')->screenshot_by_attribute($captchaPath,"id","captchaimg",false);
+		$this->container->get('browser')->wait();
+		$captchaPath = "C:\\tmp\\captcha.jpg";//$this->container->get('image')->screenshot_by_attribute($captchaPath,"id","captchaimg",false);
+		$this->container->get('image')->get_by_number(0)->screenshot($captchaPath);
 		$this->container->get('browser')->wait();
 		
 		/*
@@ -128,6 +187,13 @@ class GoogleLogin extends LoginMethod {
 		if ($captcha)
 			return $captcha;
 		return false;
+	}
+	
+	public function isCaptchaWrong() {
+		$this->container->get('browser')->wait();
+		$this->container->get('browser')->wait_js();
+		
+		return ($this->container->get('div')->get_by_inner_text("Снова введите символы", false)->is_exist() || $this->container->get('div')->get_by_inner_text("again", false)->is_exist());
 	}
 	
 	public function phoneVerificationCheck() {
@@ -210,25 +276,40 @@ class GoogleLogin extends LoginMethod {
 	
 	public function setBirthday() {
 		if (preg_match("#interstitials\/birthday#", $this->container->get('webpage')->get_url())) {
-			$this->container->get('input')->get_by_attribute('id', 'i4', false)->send_input(mt_rand(1,28));
+			$this->container->get('input')->get_by_attribute('id', 'i4', false)->set_value(mt_rand(1,28));
 			$this->container->get('browser')->wait();
-			$this->container->get('input')->get_by_attribute('id', 'i9', false)->send_input("1985");
+			$this->container->get('input')->get_by_attribute('id', 'i9', false)->set_value("1985");
 			$this->container->get('browser')->wait();
 			$this->container->get('element')->get_by_attribute('data-value', mt_rand(1,12), false)->click();
 			$this->container->get('browser')->wait();
 		}
 	}
 	
-	public function isLoggedIn() {
+	public function notNow() {
+		$this->container->get('browser')->wait();
+		$this->container->get('button')->get_by_xpath("/html/body/div/c-wiz/div/div/div/div[2]/div[4]/div[1]/button")->click();
+		$this->container->get('browser')->wait();
+		$this->container->get('browser')->wait_js();
+	}
+	
+	public function isLoggedIn($email) {
+		$this->container->get('browser')->wait();
+		$this->container->get('browser')->wait_js();
+		
 		$this->denied();
 		$this->skipRecovery();
 		$this->skipFeatures();
+		$this->notNow();
 		
 		$this->container->get('browser')->wait();
 		$url = $this->container->get('webpage')->get_url();
 		$this->container->get('browser')->wait();
+		if (preg_match("#disabled#i", $url))
+			return false;
 		
-		if(preg_match("#myaccount#i", $url)) {
+		if(preg_match("#myaccount#i", $url) || preg_match("#mail\.google\.com#i", $url)) {
+			printf("Becasue of mail google in url\n");
+			echo $url . "\n";
 			return true;
 		} else {
 			if (!$this->container->get('browser')->check_connection($url,30)) {
@@ -236,6 +317,7 @@ class GoogleLogin extends LoginMethod {
 				
 				//printf("Connection issue!\n");
 				$this->container->get(LoggerInterface::class)->error("Connection issue!");
+				return false;
 			}
 		}
 	}
@@ -248,7 +330,8 @@ class GoogleLogin extends LoginMethod {
 	}
 	
 	public function inputEmail($email) {
-		$this->container->get('input')->get_by_attribute('type', 'email', false)->send_input($email);
+		$this->container->get('input')->get_by_attribute('type', 'email', false)->set_value($email);
+		//$this->container->get('input')->get_by_attribute('type', 'email', false)->set_value($email);
 		$this->container->get('browser')->wait();
 	}
 	
@@ -270,30 +353,32 @@ class GoogleLogin extends LoginMethod {
 	}
 	
 	public function inputPassword($password) {
-		$this->container->get('input')->get_by_attribute('type', 'password', false)->send_input($password);
-			//$this->container->get('input')->get_by_name('password')->send_input($password);
+		$this->container->get('input')->get_by_attribute('type', 'password', false)->set_value($password);
+			//$this->container->get('input')->get_by_name('password')->set_value($password);
 		$this->container->get('browser')->wait();
 	}
 	
 	public function submitEmailForm() {
-		if (!$this->container->get('btn')->get_by_name('signIn')->is_visibled()) {
+		if ($this->container->get('div')->get_by_id('identifierNext', false)->is_visibled())
 			$this->container->get('div')->get_by_id('identifierNext', false)->click();
-			$this->container->get('browser')->wait();
-		} else {
+		elseif ($this->container->get('button')->get_by_id('identifierNext', false)->is_visibled())
+			$this->container->get('button')->get_by_id('identifierNext', false)->click();
+		elseif 	($this->container->get('btn')->get_by_name('signIn')->is_visibled())
 			$this->container->get('btn')->get_by_name('signIn')->click();
-			$this->container->get('browser')->wait();
 			
-		}
+		$this->container->get('browser')->wait();
+		sleep(1);
 	}
 	
 	public function submitPasswordForm() {
-		if (!$this->container->get('btn')->get_by_id('submit')->is_visibled()) {
-			$this->container->get('div')->get_by_id('passwordNext', false)->click();
-			$this->container->get('browser')->wait();
-		} else {
+		if ($this->container->get('btn')->get_by_id('submit')->is_visibled()) 
 			$this->container->get('btn')->get_by_id('submit')->click();
-			$this->container->get('browser')->wait();
-		}
+		elseif($this->container->get('div')->get_by_id('passwordNext', false)->is_visibled())
+			$this->container->get('div')->get_by_id('passwordNext', false)->click();
+		elseif($this->container->get('button')->get_by_id('passwordNext', false)->is_visibled())
+			$this->container->get('button')->get_by_id('passwordNext', false)->click();
+		
+		$this->container->get('browser')->wait();
 		
 		sleep(2);
 	}
@@ -306,7 +391,7 @@ class GoogleLogin extends LoginMethod {
 	}
 	
 	public function inputReserveEmail($reserveEmail) {
-		$this->container->get('input')->get_by_id('knowledge-preregistered-email-response', false)->send_input($reserveEmail);
+		$this->container->get('input')->get_by_id('knowledge-preregistered-email-response', false)->set_value($reserveEmail);
 		$this->container->get('browser')->wait();
 		$this->container->get('browser')->wait_js();
 	}
@@ -344,6 +429,8 @@ class GoogleLogin extends LoginMethod {
 		} elseif($this->container->get('input')->get_by_id('deviceAddress')->is_visibled()) {
 			$this->container->get('browser')->wait();
 			return true;
+		} elseif ($this->container->get('input')->get_by_id("idvreenablePhoneNumberId", false)->is_exist()) {
+			return true;
 		}
 		
 		return false;
@@ -354,12 +441,18 @@ class GoogleLogin extends LoginMethod {
 			//$this->container->get('listbox')->multi_select_indexes_by_number(0,"166");
 			$this->container->get('listbox')->multi_select_texts_by_number(0,"Russia (Россия)");
 			$this->container->get('browser')->wait();
-			$this->container->get('input')->get_by_name('deviceAddress')->send_input($phone);
+			$this->container->get('input')->get_by_name('deviceAddress')->set_value("");
+			$this->container->get('input')->get_by_name('deviceAddress')->set_value($phone);
 			$this->container->get('browser')->wait();
 		} else {
 			$this->container->get('browser')->wait();
-			$this->container->get('input')->get_by_id('phoneNumberId')->send_input($phone) ||
-			$this->container->get('input')->get_by_id('idvreenablePhoneNumberId')->send_input($phone);
+			$this->container->get('input')->get_by_id('phoneNumberId')->set_value("");
+			$this->container->get('browser')->wait();
+			$this->container->get('input')->get_by_id('idvreenablePhoneNumberId')->set_value("");
+			$this->container->get('browser')->wait();
+			$this->container->get('input')->get_by_id('phoneNumberId')->set_value($phone);
+			$this->container->get('browser')->wait();
+			$this->container->get('input')->get_by_id('idvreenablePhoneNumberId')->set_value($phone);
 			$this->container->get('browser')->wait();
 		}
 		
@@ -383,20 +476,28 @@ class GoogleLogin extends LoginMethod {
 			$this->container->get('btn')->get_by_id('next-button')->click();
 			$this->container->get('browser')->wait();
 		}
+		sleep(1);
+		
+		if ($this->container->get('span')->get_by_inner_text("Get code", false)->is_visibled() || $this->container->get('span')->get_by_inner_text("Получить код", false)->is_visibled()) {
+			$this->container->get('browser')->wait();
+			$this->container->get('span')->get_by_inner_text("Get code", false)->click() || $this->container->get('span')->get_by_inner_text("Получить код", false)->click();;
+			$this->container->get('browser')->wait();
+			sleep(1);
+		}
 	}
 	
 	public function inputSms($sms) {
 		$this->container->get('browser')->wait();
 		if ($this->container->get('input')->get_by_id('code')->is_visibled()) {
 			$this->container->get('browser')->wait();
-			$this->container->get('input')->get_by_id('code')->send_input($sms);
+			$this->container->get('input')->get_by_id('code')->set_value($sms);
 			$this->container->get('browser')->wait();
 		} elseif ($this->container->get('input')->get_by_id('idvAnyPhonePin')->is_visibled()) {
 			$this->container->get('browser')->wait();
-			$this->container->get('input')->get_by_id('idvAnyPhonePin')->send_input($sms);
+			$this->container->get('input')->get_by_id('idvAnyPhonePin')->set_value($sms);
 			$this->container->get('browser')->wait();
 		} else {
-			$this->container->get('input')->get_by_id('smsUserPin')->send_input($sms);
+			$this->container->get('input')->get_by_id('smsUserPin')->set_value($sms);
 			$this->container->get('browser')->wait();
 		}
 	}
@@ -415,4 +516,96 @@ class GoogleLogin extends LoginMethod {
 		}
 		sleep(1);
 	}
+		
+	public function solveGoogleCaptchaRecaptcha($proxy = array()) {		
+		$url = $this->container->get('webpage')->get_url();
+		$key = '';
+		
+		//6LdD2OMZAAAAAAv2xVpeCk8yMtBtY3EhDWldrBbh
+		/* Most cases, but not working with Google *
+		preg_match("#sitekey\": \"(.*?)\"#i", $this->container->get('webpage')->get_body(), $match);
+		$siteKey = $match[1];
+		*/
+		
+		/* Works only with Google */
+		$src = $this->container->get('frame')->get_by_src("https://www.google.com/recaptcha", false)->get_attribute('src');
+		//https://www.google.com/recaptcha/api2/anchor?ar=1&k=6LdD2OMZAAAAAAv2xVpeCk8yMtBtY3EhDWldrBbh&co=aHR0cHM6Ly9hY2NvdW50cy5n
+
+		preg_match("#https.*?\&k\=(.*?)\&#i", $src, $match);
+
+		if (isset($match[1]))
+			$siteKey = $match[1];
+		else $siteKey = '6LdD2OMZAAAAAAv2xVpeCk8yMtBtY3EhDWldrBbh';
+		
+		if (isset($proxy['login']))
+			$proxy['login']='Selyansolo2021';
+		if (isset($proxy['password']))
+			$proxy['password']='E3k2LiP';
+		if (isset($proxy['ip']))
+			$proxy['ip']='109.172.6.95';
+		if (isset($proxy['port']))
+		$proxy['port']=50100;
+		
+		$request = 'http://2captcha.com/in.php?key=' . $key . '&method=userrecaptcha&googlekey=' . $siteKey . '&pageurl=' . $url;// . "&proxy=" . $proxy['login'] . ':' . $proxy['password'] . "@" . $proxy['ip'] . ':' . $proxy['port'];
+		
+		$tryI = 0;
+		
+		do {
+			$response = $this->container->get('webpage')->load_web_page($request);
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			preg_match("#(.*?)\|(.*?)$#i", $response, $match);
+			echo $response . "\n";
+			
+			if ($tryI > 7) break;
+			sleep(2);
+			$tryI += 1;
+		} while(!isset($match[1]));
+		
+		if ($match[1] == 'OK' ) {
+			$id = $match[2];
+			
+			$resultUrl = 'http://2captcha.com/res.php?key=' . $key . '&action=get&id=' . $id;
+			
+			do {
+				$ready = $this->container->get('webpage')->load_web_page($resultUrl);
+
+				printf("Waiting 5 seconds...");
+				sleep(5);
+			} while ($ready == 'CAPCHA_NOT_READY');
+			
+			preg_match("#OK\|(.*?)$#", $ready, $match2);
+			if (isset($match2[1])) {
+				$captcha = $match2[1];
+			} 
+		} 
+		
+		if (isset($captcha)) {
+			$this->container->get('textarea')->set_value_by_attribute("id", "g-recaptcha-response", true, $captcha);
+			$this->container->get('browser')->wait();
+			
+			$this->container->get('textarea')->set_value_by_attribute("id", "g-recaptcha-response-1", true, $captcha);
+			$this->container->get('browser')->wait();
+			$this->container->get('textarea')->set_value_by_attribute("id", "g-recaptcha-response-2", true, $captcha);
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->run_java_script("let submitToken = (token) => {document.querySelector('#g-recaptcha-response').value = token;___grecaptcha_cfg.clients['0']['Y']['Y']['callback'] (token);};submitToken('" . $captcha . "');");
+			printf("Recaptcha solved!\n");
+			
+			return true;
+		}
+		
+		printf("Recaptcha not solved!\n");
+		return false;
+	}
+	
+	public function isReCaptchaExist() {
+		if (preg_match("#recaptcha#", $this->container->get('webpage')->get_url())) {
+			printf("Recaptcha found!\n");
+			return true;
+		}
+		printf("Recaptcha not found.\n");
+		return false;
+	}
+	
+	
 }

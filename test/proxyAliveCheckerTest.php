@@ -7,7 +7,7 @@ $app->useContainer($container, $injectWithTypeHint = true);
 $invoker = new Invoker\Invoker(null, $container);
 
 $proxies = App\Model\Proxy::where('status', 0, '>')::get();
-$container->set('client', \DI\create('Xhe\Client')->constructor('127.0.0.1', 7011));
+$container->set('client', \DI\create('Xhe\Client')->constructor('127.0.0.1', 7667));
 
 foreach($proxies as $proxy) {
 	$invoker->call(\App\Command\DisableProxy::class);

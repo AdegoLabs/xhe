@@ -35,6 +35,30 @@ class GooglePlaygroundStep3 extends Command {
 		return $this->getResponse();
 	}
 	
+	public function setHeader($name, $value) {
+		if ($this->container->get('anchor')->get_by_inner_text("Add headers", false)->is_visibled()) {
+			$this->container->get('anchor')->get_by_inner_text("Add headers", false)->click();
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			
+			$this->container->get('input')->get_by_name("newHeaderName")->send_input($name);
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			
+			$this->container->get('input')->get_by_name("newHeaderValue")->send_input($value);
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			
+			$this->container->get('button')->get_by_id("addHeaderButton", false)->click();
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			
+			$this->container->get('anchor')->get_by_id("closeAddHeadersBubble", false)->click();
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+		}
+	}
+	
 	public function setAuthCode($authCode) {
 		$this->authCode = $authCode;
 	}
@@ -59,12 +83,15 @@ class GooglePlaygroundStep3 extends Command {
 		$this->accessToken = $accessToken;
 	}
 	
-	public function __invoke($uri, $method, $body = false, $file = false) {
+	public function __invoke($uri, $method, $body = false, $file = false, $header = array()) {
 		$url = 'https://developers.google.com/oauthplayground/#step3&auth_code=' . $this->getAuthCode() . '&refresh_token=' . $this->getRefreshToken() . '&access_token_field=' . $this->getAccessToken() . '&url=' . urlencode($uri) . '&content_type=application%2Fjson&http_method=' . $method . '&useDefaultOauthCred=unchecked&oauthEndpointSelect=Google&oauthAuthEndpointValue=https%3A%2F%2Faccounts.google.com%2Fo%2Foauth2%2Fv2%2Fauth&oauthTokenEndpointValue=https%3A%2F%2Foauth2.googleapis.com%2Ftoken&expires_in=3598&for_access_token=' . $this->getAccessToken() . '&includeCredentials=checked&accessTokenType=bearer&autoRefreshToken=checked&accessType=offline&prompt=consent&response_type=code&wrapLines=on';
 		
-		$this->container->get('browser')->navigate('https://localhost/dashboard');
+		$this->container->get('browser')->navigate('https://localhost/');
 		$this->container->get('browser')->navigate($url);
 		$this->container->get('browser')->wait();
+		
+		if (!empty($header))
+			$this->setHeader($header[0], $header[1]);
 		
 		$this->container->get('anchor')->get_by_id('requestBodyButton')->click();
 		$this->container->get('browser')->wait();

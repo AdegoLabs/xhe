@@ -1,13 +1,11 @@
 <?php
-
 namespace Xhe;
-
-use XheWindowInterface;
-
 class XheWindowInterfaces extends XheBaseList
 {
-	
-		function __construct($inner_numbers,$server,$password="")
+	/////////////////////////////////////// SERVICE FUNCTIONS ///////////////////////////////////////////
+
+	// server initialization
+	function __construct($inner_numbers,$server,$password="")
 	{    
 		XheBaseList::XheBaseList($inner_numbers,$server,$password);
 
@@ -24,8 +22,10 @@ class XheWindowInterfaces extends XheBaseList
 		}
 	}
 
-	
-		function get_by_text($text,$exactly=false)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// получить интерфейс окна по его тексту
+	function get_by_text($text,$exactly=false)
 	{
 		$iNeedNum=-1;
 		for ($i=0;$i<count($this->elements);$i++) 
@@ -37,12 +37,14 @@ class XheWindowInterfaces extends XheBaseList
 			}						
 		}
 
-				if ($iNeedNum!=-1)
+		// вернем элемент
+		if ($iNeedNum!=-1)
 			return $this->elements[$iNeedNum]->get_clone();
 		else
 			return false;
 	}	
-		function get_by_class_name($class_name,$exactly=false)
+	// получить интерфейс окна по его классу
+	function get_by_class_name($class_name,$exactly=false)
 	{
 		$iNeedNum=-1;
 		for ($i=0;$i<count($this->elements);$i++) 
@@ -54,12 +56,14 @@ class XheWindowInterfaces extends XheBaseList
 			}						
 		}
 
-				if ($iNeedNum!=-1)
+		// вернем элемент
+		if ($iNeedNum!=-1)
 			return $this->elements[$iNeedNum]->get_clone();
 		else
 			return false;
 	}	
-		function get_by_point($x,$y)
+	// получить интерфейс окна по его точке
+	function get_by_point($x,$y)
 	{
 		$iNeedNum=-1;
 		for ($i=0;$i<count($this->elements);$i++) 
@@ -80,7 +84,8 @@ class XheWindowInterfaces extends XheBaseList
 			break;
 		}
 
-				if ($iNeedNum!=-1)
+		// вернем элемент
+		if ($iNeedNum!=-1)
 			return $this->elements[$iNeedNum]->get_clone();
 		else
 			return false;

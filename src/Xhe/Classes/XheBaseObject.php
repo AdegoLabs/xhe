@@ -1,42 +1,52 @@
 <?php
-
 namespace Xhe;
+class XheBaseObject
+{
+	///////////////////////////////////////////////////////// SERVICVE VARIABLES /////////////////////////////////////////////////////////////
 
-class XheBaseObject {
-
+	// server address and port
 	var $server;
+	// server password
 	var $password;
+	// command prefix
 	var $prefix;
 
+	// default timeout for execute command (seconds)
 	static $COMMAND_TIME=100;
+	// default count of try execute command
 	static $COMMAND_TRY_COUNT=3;
 	public static $server_tab=-1;
 
+	///////////////////////////////////////////////////////// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ /////////////////////////////////////////////////////////////
+	// server initialization
 	function __construct($server,$password="")
 	{    
 		$this->server = $server;
 		$this->password = $password;
 	}
+	// call a command on the server
 	function call($command,$timeout=-1)
 	{
+		// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		if ($timeout==-1)
-			$timeout=XHEBaseObject::$COMMAND_TIME;
+			$timeout=XheBaseObject::$COMMAND_TIME;
 
+		// call server and return its answer
 		$url = "http://".$this->server."/".$command;
 
 		if($this->password!="")
 		{
 			if(strstr($url,"&")!=false || strstr($url,"?")!=false)
-				$url .= "&password=".base64_encode($this->password);
+				$url .= "&xhe_password=".base64_encode($this->password);
 			else
-				$url .= "?password=".base64_encode($this->password);
+				$url .= "?xhe_password=".base64_encode($this->password);
 		}
-		if(XHEBaseObject::$server_tab!=-1)
+		if(XheBaseObject::$server_tab!=-1)
 		{
 			if(strstr($url,"&")!=false || strstr($url,"?")!=false)
-				$url = $url."&server_tab=".base64_encode(XHEBaseObject::$server_tab);
+				$url = $url."&server_tab=".base64_encode(XheBaseObject::$server_tab);
 			else
-				$url = $url."?server_tab=".base64_encode(XHEBaseObject::$server_tab);
+				$url = $url."?server_tab=".base64_encode(XheBaseObject::$server_tab);
 		}
 		$postvars="";
 		if(strstr($url,"?"))
@@ -45,7 +55,7 @@ class XheBaseObject {
 			$postvars=substr($url,$indexPost+1,strlen($url)-$indexPost);
 			$url=substr($url,0,$indexPost);
 	   	}
-      		for ($i=0;$i<XHEBaseObject::$COMMAND_TRY_COUNT;$i++)
+      		for ($i=0;$i<XheBaseObject::$COMMAND_TRY_COUNT;$i++)
 		{
 					$headers = array("Content-Type:application/x-www-form-urlencoded");
 	      		$cUrl = curl_init();
@@ -64,34 +74,42 @@ class XheBaseObject {
 				break;
 		}
 			
-		$bClosePHPIfNotConnected = false;
-		$bWarningPHPIfNotConnected = false;
+		// close php if not connect to Xhe
+		global $bClosePHPIfNotConnected;
+		global $bWarningPHPIfNotConnected;
 		if ($bClosePHPIfNotConnected===true && $html===false)
 		{
-			die("Connection error 404!");
-			
+  			echo("\nКомманда $url?$postvars не выполнена.Нет соединения с программой, проверьте совпадение портов и их доступность а также что програма запущена и не зависла.\n");			
+			die("XWeb@exit");
 		}
                 if ($bWarningPHPIfNotConnected===true && $html===false)
   			echo("PHP not connected to Application. Check Application and PHP port and connection to Application.\nCommand $url?$postvars not runned.\n");
     		
-	        $html = trim($html);
-		//usleep(30000); 
+	        //$html = trim($html);
+		usleep(30000); 
 		return $html;
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	// call a command on the server
 	function call_boolean($command,$params,$timeout=-1)
 	{
+		// call
 		if ($this->call($this->get_command_string($command,$params),$timeout)=="true")
 			return true;
 		else
 			return false;
 	}
+	// call a command on the server
 	function call_get($command,$params,$timeout=-1)
 	{
+		// call
 		$res = $this->call($this->get_command_string($command,$params),$timeout);
 		if ($res=="false")
 			return false;
+		else if ($res=="true")
+			return true;
 		else
 		{
 			if ($res=="-1")
@@ -100,7 +118,7 @@ class XheBaseObject {
 				return $res;
 		}
 	}
-
+	// get command string
 	function get_command_string($command,$params)
 	{
 		if ($this->prefix!="")
@@ -123,5 +141,6 @@ class XheBaseObject {
 
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 ?>

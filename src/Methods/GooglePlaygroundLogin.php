@@ -22,7 +22,7 @@ class GooglePlaygroundLogin extends GoogleLogin {
 				$this->submitAllowConsentForm();
 			}
 			
-			if ($this->isLoggedIn()) {
+			if ($this->isLoggedIn($email)) {
 				$this->container->get(LoggerInterface::class)->info("Logged in successfully as " . $email);
 				return true;
 			}
@@ -32,10 +32,24 @@ class GooglePlaygroundLogin extends GoogleLogin {
 			$this->inputEmail($email);
 				
 			if (!$this->isEnteredEmailIsFull()) {
+				$fullEmulation = false;
+				
 				beep();
 				$this->container->get(LoggerInterface::class)->error("Found SEND_INPUT bug!");
 				printf("Found SEND_INPUT bug!\n");
-				die("Script work was stopped due to service errors...");
+				//die("Script work was stopped due to service errors...");
+				
+				$this->container->get('input')->get_by_attribute('type', 'email', false)->set_value("");
+				$this->container->get('browser')->wait();
+				$this->container->get('input')->get_by_attribute('type', 'email', false)->focus();
+				$this->container->get('browser')->wait();
+				$this->container->get('input')->get_by_attribute('type', 'email', false)->click();
+				$this->container->get('browser')->wait();
+				$this->container->get('browser')->wait_js();
+				$this->container->get('input')->get_by_attribute('type', 'email', false)->set_value($email);
+				$this->container->get('browser')->wait();
+				if (!$this->isEnteredEmailIsFull()) {beep();die("FOUND SEND_INPUT BUG!");}
+				
 				//sleep(1000);
 			}
 			
@@ -44,15 +58,44 @@ class GooglePlaygroundLogin extends GoogleLogin {
 		
 		sleep(3);
 		
-		if ($this->isCaptchaExist()) {
-			$captcha = $this->solveGoogleCaptchaV1();
-			$this->inputCaptcha($captcha);
-			$this->submitEmailForm();
+		do {
+			if ($this->isCaptchaExist()) {
+				$captcha = $this->solveGoogleCaptchaV1();
+				$this->inputCaptcha($captcha);
+				$this->submitEmailForm();
+			}
+		} while ($this->isCaptchaWrong());
+		
+		if ($this->isReCaptchaExist()) {
+			$this->solveGoogleCaptchaRecaptcha();
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			echo $this->container->get('btn')->click_by_number(0) || $this->container->get('btn')->get_by_attribute("class","submitButton", false)->click();
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			sleep(2);
 		}
-
+		sleep(3);
+		
+		if ($this->container->get('frame')->get_by_src("https://www.google.com/recaptcha", false)->is_visibled()) {
+			$this->container->get('browser')->wait();
+			$this->container->get('button')->get_by_number(0)->click();
+			$this->container->get('browser')->wait();
+			$this->container->get('browser')->wait_js();
+			sleep(3);
+		}
+			
 		if ($this->isPasswordFormVisibled()) {
+			
 			$this->inputPassword($password);
 			$this->submitPasswordForm();
+		}
+		
+		if ($this->isPasswordChanged()) {
+			$this->container->get(LoggerInterface::class)->error("Password was changed for " . $email . "!");
+			printf("Password was changed for %s!\n", $email);
+			
+			return false;
 		}
 		
 		if ($this->isReserveEmailRequired()) {
@@ -89,7 +132,7 @@ class GooglePlaygroundLogin extends GoogleLogin {
 			$this->submitAllowConsentForm();
 		}
 		
-		if ($this->isLoggedIn()) {
+		if ($this->isLoggedIn($email)) {
 			$this->container->get(LoggerInterface::class)->info("Logged in successfully as " . $email . "!");
 			return true;
 		} else {
@@ -97,6 +140,7 @@ class GooglePlaygroundLogin extends GoogleLogin {
 			return false;
 		}
 	}
+	
 	
 	public function isAllowConsentRequired() {
 		$this->container->get('browser')->wait();
@@ -131,9 +175,12 @@ class GooglePlaygroundLogin extends GoogleLogin {
 				$this->container->get('browser')->wait();
 			}
 		}
+		$this->container->get('button')->get_by_id("submit_approve_access", false)->click();
+		$this->container->get('browser')->wait();
+		sleep(2);
 	}
 	
-	public function isLoggedIn() {
+	public function isLoggedIn($email) {
 		$this->denied();
 		$this->skipRecovery();
 		$this->skipFeatures();

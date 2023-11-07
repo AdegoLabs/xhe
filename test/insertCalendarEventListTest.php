@@ -16,12 +16,15 @@
 		
 		if ($restart) {
 			switch($ip) {
-				case '127.0.0.1' : launchXhe(($rt ? XHE_EXE_RT : XHE_EXE), $port);
-				default: remoteXheLaunch(($rt ? XHE_EXE_RT : XHE_EXE), $ip, '8000', $port);
+				case '127.0.0.1' : launchXhe(($rt ? XHE_EXE_RT_OBJ : XHE_EXE_OBJ), $port);
+				default: remoteXheLaunch(($rt ? XHE_EXE_RT_OBJ : XHE_EXE_OBJ), $ip, '8000', $port);
 			}
 			
 		}
+		
 		$container->get('application')->maximize();
+		$container->get('application')->minimize_to_tray();
+		
 		do {
 			$calendarName = 'Calendar' . generatePassword(7);
 			
@@ -54,8 +57,8 @@
 		
 			if (!$restart) {
 				switch($ip) {
-					case '127.0.0.1' : launchXhe(($rt ? XHE_EXE_RT : XHE_EXE), $port);
-					default: remoteXheLaunch(($rt ? XHE_EXE_RT : XHE_EXE), $ip, '8000', $port);
+					case '127.0.0.1' : launchXhe(($rt ? XHE_EXE_RT_OBJ : XHE_EXE_OBJ), $port);
+					default: remoteXheLaunch(($rt ? XHE_EXE_RT_OBJ : XHE_EXE_OBJ), $ip, '8000', $port);
 				}
 			}
 			
@@ -76,7 +79,7 @@
 				} else {
 					$container->get('application')->enable_quit(true);
 					$container->get('application')->exitapp();
-					$container->get('application')->quit();
+					//$container->get('application')->quit();
 					sleep(6);
 					$container->get('filesystem')->remove(XHE_DIR . DIRECTORY_SEPARATOR . $port);
 				}
@@ -121,7 +124,7 @@
 					'method' => 'PUT',
 					//'body' => '{"accessRole": "writer", "notificationSettings": {"notifications": [{"method": "email","type": "eventCreation"}]},"primary": ' . ($loggedPrevious === NULL ? 'true' : 'false') . '}'
 					//'body' => '{"accessRole": "freeBusyReader", "primary": ' . ($loggedPrevious === NULL ? 'true' : 'false') . '}'
-					'body' => '{"accessRole": "freeBusyReader", "notificationSettings": {"notifications": [{"method": "email","type": "eventCreation"}]},"primary": ' . ($loggedPrevious === NULL ? 'true' : 'false') . ', "defaultReminders": [{"method": "email","minutes": 60},{"method": "popup","minutes": 60},{"method": "popup","minutes": 15},{"method": "popup","minutes": 30}]' . '}'
+					'body' => '{"accessRole": "freeBusyReader", "notificationSettings": {"notifications": [{"method": "email","type": "eventCreation"}]},"primary": ' . ($loggedPrevious === NULL ? 'true' : 'false') . ', "defaultReminders": [{"method": "email","minutes": 60},{"method": "popup","minutes": 60},{"method": "popup","minutes": 15}]' . '}'
 					//'body' => '{"accessRole": "freeBusyReader", "notificationSettings": {"notifications": [{"method": "email","type": "eventCreation"}]},"primary": ' . ($loggedPrevious === NULL ? 'true' : 'false') . '}'
 					//'body' => //'{"accessRole": "freeBusyReader","defaultReminders": [{"method": "email","minutes": 60},{"method": "popup","minutes": 15},{"method": "popup","minutes": 60},{"method": "popup","minutes": 2880},{"method": "popup","minutes": 1440}],"notificationSettings": {"notifications": [{"method": "email","type": "agenda"},{"method": "email","type": "eventResponse"},	{"method": "email","type": "eventCreation"}]},"primary": true}'
 				])):
@@ -190,7 +193,7 @@
 			} else {
 				$container->get('application')->enable_quit(true);
 				$container->get('application')->exitapp();
-				$container->get('application')->quit();
+				//$container->get('application')->quit();
 				sleep(8);
 				$container->get('filesystem')->remove(XHE_DIR . DIRECTORY_SEPARATOR . $port);
 			}
